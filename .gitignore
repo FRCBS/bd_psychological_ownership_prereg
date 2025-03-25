@@ -1,0 +1,24 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+
+#Ignore everything
+*
+*/*
+#Include .gitignore
+!.gitignore
+#Include all code in src
+!src/*.R
+!src/*.sh
+!src/*.py
+!src/*.pl
+!src/*.Rmd
+#Include documentation
+!results/*.txt
+!results/*.rst
+!results/*.md
+#Include result .sh s
+!results/*/*.sh
+#Include .json files
+!bin/*.json
