@@ -11,3 +11,6 @@
 !*.Qmd
 
 .Rproj.user
+data/data_simulated.csv
+!codebook_data_simulated.csv
+!synthetic_data_simulated.csv

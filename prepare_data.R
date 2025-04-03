@@ -4,7 +4,16 @@
 # to store the data.
 
 library(worcs)
-dat_simulated <- read.csv("simulated_data.csv")
+library(here)
+library(tidyverse)
+data_simulated <- read.csv(here("data/simulated_data.csv"))[,-1]
+
+#####################################################################################################################################
+# Read real data in 
+# file <- here("data/Tulokset - xxxxx.xlsx")
+# data <- read_xlsx(file,n_max = XX)
+# summary(data)
+#####################################################################################################################################
 
 f1 <- function (x){
   #as numbers but labelled with words
@@ -17,7 +26,21 @@ f1 <- function (x){
   x
 }
 
-dat_simulated <- dat_simulated %>% 
+#Make question abbreviations
+qabbr <- c(
+  str_c("po0",1:3),
+  str_c("si0",1:3),
+  str_c("it0",1:3),
+  str_c("ie0",1),
+  str_c("ac0",1:4),
+  str_c("ai0",1:4),
+  str_c("iv0",1:3),
+  str_c("bd0",1:4),
+  str_c("de0",1:2)
+)
+
+
+data_simulated <- data_simulated %>% 
   mutate_at(
     vars(
       qabbr[1:21]),
@@ -28,4 +51,27 @@ dat_simulated <- dat_simulated %>%
          de01 = factor(de01)
   )  
 
-open_data(dat_simulated)
+#####################################################################################################################################
+original_name <- here(paste0("data/",deparse(substitute(data_simulated)), ".csv")) # when real data collected this will be changed to it
+#####################################################################################################################################
+
+# Above is your data cleaning script
+# it ends with closed_data(), which for now just saves your synthetic data locally.
+# When you have real data, it will save the real data locally.
+closed_data(
+  #####################################################################################################################################
+  data = data_simulated, # when real data collected this will be changed to it
+  #####################################################################################################################################
+  filename = original_name, 
+  synthetic = FALSE)
+# Then, add your custom synthetic data to this data asset (yes, for now they are both the same, but
+# when you collect the real data, the local data will be real and the remote synthetic
+synthetic_name <- paste0("synthetic_",deparse(substitute(data_simulated)), ".csv")
+#####################################################################################################################################
+original_name <- paste0("data/",deparse(substitute(data_simulated)), ".csv") # when real data collected this will be changed to it
+#####################################################################################################################################
+add_synthetic(
+  data = data_simulated,
+  synthetic_name = synthetic_name,
+  original_name = original_name,
+)

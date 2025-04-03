@@ -1,0 +1,28 @@
+"name","type","n","missing","unique","mean","median","mode","mode_value","sd","v","min","max","range","skew","skew_2se","kurt","kurt_2se","category","description"
+"po01","ordered, factor",1000,0,8,NA,NA,263,"6",NA,0.78884,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"po02","ordered, factor",1000,0,8,NA,NA,274,"6",NA,0.78519,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"po03","ordered, factor",1000,0,8,NA,NA,296,"6",NA,0.782848,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"si01","ordered, factor",1000,0,8,NA,NA,291,"6",NA,0.781938,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"si02","ordered, factor",1000,0,8,NA,NA,275,"6",NA,0.783656,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"si03","ordered, factor",1000,0,8,NA,NA,297,"6",NA,0.780796,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"it01","ordered, factor",1000,0,8,NA,NA,281,"6",NA,0.783854,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"it02","ordered, factor",1000,0,8,NA,NA,278,"6",NA,0.785704,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"it03","ordered, factor",1000,0,8,NA,NA,279,"6",NA,0.786262,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"ie01","ordered, factor",1000,0,8,NA,NA,251,"6",NA,0.786194,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"ac01","ordered, factor",1000,0,8,NA,NA,279,"6",NA,0.787792,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"ac02","ordered, factor",1000,0,8,NA,NA,267,"6",NA,0.78772,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"ac03","ordered, factor",1000,0,8,NA,NA,296,"6",NA,0.781594,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"ac04","ordered, factor",1000,0,8,NA,NA,292,"6",NA,0.786442,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"ai01","ordered, factor",1000,0,8,NA,NA,263,"6",NA,0.789492,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"ai02","ordered, factor",1000,0,8,NA,NA,282,"6",NA,0.77759,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"ai03","ordered, factor",1000,0,8,NA,NA,294,"6",NA,0.781042,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"ai04","ordered, factor",1000,0,8,NA,NA,280,"6",NA,0.782958,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"iv01","ordered, factor",1000,0,8,NA,NA,280,"6",NA,0.781092,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"iv02","ordered, factor",1000,0,8,NA,NA,286,"6",NA,0.786604,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"iv03","ordered, factor",1000,0,8,NA,NA,285,"6",NA,0.784776,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"bd01","ordered, factor",1000,0,4,NA,NA,784,"yes",NA,0.342414,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"bd02","integer",1000,0,31,16.756,17,17,NA,5.23639989724657,NA,1,31,30,-0.0508296036003984,-0.328595138429818,-0.280334763001321,-0.907031141974346,NA,NA
+"bd03","integer",1000,0,9,3.814,4,4,NA,1.49921701286093,NA,1,9,8,0.115549827843568,0.746988152303854,-0.322531913139824,-1.04356122789169,NA,NA
+"bd04","Date",1000,0,544,NA,NA,6,"19339",NA,0.99763,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"de01","factor",1000,0,4,NA,NA,607,"women",NA,0.478666,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"de02","integer",1000,0,52,40.205,40,40,NA,10.0895378374717,NA,18,70,52,0.102660384000461,0.663662525426923,-0.272301299325699,-0.881038640531796,NA,NA
