@@ -1,0 +1,966 @@
+---
+title: "Supplementary file 1: Preregistered analysis"
+author: "Abigail Edwards and Mikko Arvas"
+date: "`r Sys.time()`"
+output:
+  html_document:
+    toc: yes
+    theme: united
+  pdf_document:
+    toc: yes
+---
+
+TODO:
+ -remove superfluous outputs
+ -check discussion with Lauri, was there anything else to do?
+ -check model saving
+ -which format to manuscript file
+ -fill out the preregistration form
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+	echo = TRUE,
+	message = FALSE,
+	warning = FALSE
+)
+library(worcs)
+library(tidyverse)
+library(gtsummary)
+library(likert)
+library(here)
+library(corrplot)
+library(ggstats)
+library(lavaan)
+library(lavaanPlot)
+#library(semPlot) # update plots to semPlot later
+#library(blavaan) # could not get it to work with this model and synthetic data
+#library(tidySEM) # https://github.com/yrosseel/lavaan/issues/359 lavaan does not work if tidySEM is loaded.
+```
+
+
+# Data
+
+```{r}
+load_data()
+if (exists("data_simulated")) {
+  data <- data_simulated
+  rm(data_simulated)
+}
+# sometimes it get strange errors about C stack which can be solved with this
+#data <- as.data.frame(data)
+fitmodels <- TRUE
+if (!fitmodels) {
+  print("Loading previously fitted models")
+  load(file=here(str_replace(str_c("results/",datafile),"\\.data\\.",".models.")))
+  fit.po02ss <- models$fit.po02ss
+  fit.po02 <- models$fit.po02
+  fit.po03ss <- models$fit.po03ss
+  fit.po03 <- models$fit.po03
+}
+
+```
+
+
+Items
+<table>
+<tr>
+<td></td>
+<td> Psychological ownership</td>
+</tr>
+<tr>
+<td>po01</td>
+<td>
+1. I feel a very high degree of personal ownership of donating blood.
+</td>
+</tr>
+<tr>
+<td>po02</td>
+<td>
+2. I feel like donating blood belongs to me.
+</td> </tr>
+<tr>
+<td>po03</td> <td>
+3. I feel like I own donating blood.
+</td> </tr>
+<tr> <td></td>
+
+<td>
+Self-identity
+</td> </tr>
+<tr>
+<td>si01</td>
+<td>
+1. Donating blood is important to me.
+</td> <tr>
+<td>si02</td> <td>
+2. I am like the kind of person who donates blood.
+</td> </tr>
+<tr> <td>si03</td> 
+<td>
+3. Donating blood is an important part of who I am.
+</td> </tr>
+<tr> <td></td>
+
+<td>
+Intention
+</td></tr>
+<tr><td>it01</td>
+<td>
+1. I would like to donate blood in the future.
+</td>   </tr>
+<tr><td>it02</td>
+<td>
+2. I intend to donate blood in the future.
+</td> </tr>
+<tr><td>it03</td>
+
+<td>
+3. I intend to make more than just a one-off blood donation.
+</td></tr>
+<tr><td></td>
+<td>
+Intention to donate for emergency
+</td></tr>
+<tr><td>ie01</td>
+<td>
+1. I would be willing to donate blood if I received an urgent callout from the Finnish Red Cross Blood Service.
+</td></tr>
+<tr><td></td> 
+<td>
+Antecedents of psychological ownership
+</td></tr>
+<tr><td></td> 
+
+<td>
+Control
+</td></tr>
+<tr><td>ac01</td>
+<td>
+1. I have influence over the things that affect me while donating blood.
+</td></tr>
+<tr><td>ac02</td>
+<td>
+2. I control the location and scheduling for donating blood.
+</td></tr>
+<tr><td>ac03</td>
+<td>
+3. I influence decisions related to my blood donation.
+</td></tr>
+<tr><td>ac04</td>
+<td>
+4. In general, I have control over donating blood.
+</td></tr>
+<tr><td></td>
+<td>
+Intimate knowledge
+</td></tr>
+<tr><td>ai01</td>
+
+<td>
+1. I am intimately familiar with what is going on with regard to donating blood.
+</td></tr>
+<tr><td>ai02</td>
+<td>
+2. I have a depth of knowledge as it relates to donating blood.
+</td></tr>
+<tr><td>ai03</td>
+<td>
+3. I have a comprehensive understanding of donating blood.
+</td></tr>
+<tr><td>ai04</td>
+<td>
+4. I have a broad understanding of donating blood.
+</td></tr>
+<tr><td></td>
+
+<td>
+Self-Investment
+</td></tr>
+<tr><td>iv01</td>
+<td>
+1.	I have invested a major part of myself into donating blood.
+</td></tr>
+<tr><td>iv02</td>
+<td>
+2. I have invested a significant amount of my time into donating blood.
+</td></tr>
+<tr><td>iv03</td>
+<td>
+3. Overall, I invested a lot into donating blood.
+</td></tr>
+<tr><td></td>
+
+
+<td>
+Blood donation history
+</td></tr>
+<tr><td>bd01</td>
+<td>
+1. Do you believe that you are currently eligible to donate blood [yes, no, unsure]
+</td></tr>
+<tr><td>bd02</td>
+<td>
+2. How many times in total have you donated blood at the Finnish Red Cross Blood Service Finland? [select number]
+</td></tr>
+<tr><td>bd03</td>
+<td>
+3. How many times in the last two years have you donated at the Finnish Red Cross Blood Service? [select number]
+</td></tr>
+<tr><td>bd04</td>
+<td>
+4. When did you last attend a Finnish Red Cross blood donation centre with the intention of donating blood? [select date]
+</td></tr>
+<tr><td></td>
+
+<td>
+Demographics
+</td></tr>
+<tr><td>de01</td>
+<td>1. What is your gender? [man, woman, non-binary, prefer to not disclose, prefer to self-describe (open response)]
+</td></tr>
+<tr><td>de02</td>
+<td>
+2. How old are you today? [select number]
+</td></tr>
+</table>
+
+
+```{r}
+summary(data)
+```
+
+
+# Plot
+
+
+
+## Demographics Table 1
+
+```{r}
+
+table1 <-
+  tbl_summary(
+    data %>% 
+      rename(
+      Gender =  de01,
+      Age = de02,
+      DonationEligibility = bd01,
+      DonationCount = bd02,
+      DonationCountLast2years = bd03,
+    ),
+    include = c(
+      Age,
+      DonationEligibility,
+      DonationCount,
+      DonationCountLast2years
+      ),
+    by =  Gender
+    
+  ) %>%
+  add_n()  # add column with total number of non-missing observations
+table1
+```
+
+
+
+## Age by Gender
+
+```{r}
+
+p <- ggplot(data)
+p <- p +  geom_histogram(aes(x=de02),binwidth = 5)
+p <- p + facet_wrap(. ~ de01)
+p <- p + xlab("Age in years")
+p
+
+```
+
+
+
+## Psychological ownership
+
+
+```{r}
+gglikert(
+  data, 
+  include =   starts_with("po") 
+)
+```
+
+
+
+
+## Self-identity
+
+
+```{r}
+gglikert(
+  data, 
+  include =   starts_with("si") 
+)
+```
+
+
+## Intention
+
+```{r}
+gglikert(
+  data,
+  include = c("it01","it02","it03","ie01")
+)
+```
+
+
+## Antecedents of psychological ownership - Control
+
+```{r}
+gglikert(
+  data, 
+  include =   starts_with("ac") 
+)
+```
+
+## Antecedents of psychological ownership - Intimate knowledge
+
+
+```{r}
+gglikert(
+  data, 
+  include =   starts_with("ai") 
+)
+```
+
+
+## Antecedents of psychological ownership - Self-Investment
+
+
+```{r}
+gglikert(
+  data, 
+  include =   starts_with("iv") 
+)
+```
+
+
+
+# Model
+
+
+## Confirmatory factor analysis
+
+```{r}
+models <- list()
+
+isordered <- data %>%  summarise(across(everything(), ~ is.ordered(.x))) %>%  as.logical() %>% which()
+isfactor <- data %>%  summarise(across(everything(), ~ is.factor(.x))) %>%  as.logical() %>% which()
+
+#lavaan does not understand empty factor levels
+data.fit <- data %>%
+  #lavaan cannot deal with unordered factor with more then 2 levels
+  filter(de01 == 'man' | de01 == "women") %>% # exclusion
+  filter(bd01 != 'no') %>% # exclusion
+  mutate(
+    across(isfactor, ~ fct_drop(.x)
+    ) %>% 
+      mutate(
+        bd04 = as.numeric(bd04), # lavaan cannot handle dates
+        bd04 = bd04 / 10^-(2 - str_length(as.numeric(max(bd04)))) # https://groups.google.com/g/lavaan/c/r7w-4HHg5R0 
+        #"Your underweight variance seems to be much larger than other variances.  Try dividing it by 10 or 100 to make the SDs more similar across modeled variables." 
+        # But this does not seem to necessarily help.
+      )
+  ) %>% 
+  #Original paper used sum scores instead of CFA. Let's add them for comparison
+  mutate(
+    ss_psycown = as.numeric(po01) + as.numeric(po02) + as.numeric(po03),
+    ss_selfid = as.numeric(si01) + as.numeric(si02) + as.numeric(si03),
+    ss_intention = as.numeric(it01) + as.numeric(it02) + as.numeric(it03),
+    #donation history is on diffent scales, normalise them before summing.
+    #others should be positively correlated, but bd04 negatively
+    ss_blooddonor = scale(as.numeric(bd02)) 
+    + scale(as.numeric(bd01)) 
+    + scale(bd03)  
+    -scale(bd04) # do we want to include the DATE OF LAST DONATION?
+    
+  )
+
+# To make bootstrapping run there cannot be any unordered factors
+data.fit2 <- data.fit %>% 
+  mutate(
+    de01 = as.ordered(de01)
+  ) %>% # and neither any factors at all
+mutate(
+  across(everything(),as.numeric)
+)  # but this also good for plotting correlations
+
+
+summary(data.fit)
+```
+
+
+```{r}
+corrplot(cor(data.fit2))
+```
+
+
+
+```{r}
+po01.model <- ' po =~ po01 + po02 + po03
+                si =~ si01 + si02 + si03
+                it =~ it01 + it02 + it03
+                ac =~ ac01 + ac02 + ac03 + ac04
+                ai =~ ai01 + ai02 + ai03 + ai04 
+                iv =~ iv01 + iv02 + iv03
+                bd =~ bd02 + bd03 + bd04 #bd02 is sure correlate positively
+
+'
+                
+fit.po01.cfa <- cfa(po01.model,  
+                    estimator = "WLSMV", #
+                    
+                    data = data.fit)
+fit.po01.cfa
+```
+
+
+```{r}
+lavaan::summary(fit.po01.cfa,standardized = TRUE) # tidySEM is loaded this fails!
+```
+
+```{r}
+cfastd <- lavaan::standardizedsolution(fit.po01.cfa)
+cfastd %>% 
+  #"est.std" (or Std.all in above summary output) is "factor loading" and crude rule if thumb is that abs(Std.all) should be above 0.3
+  filter(abs(est.std) < 0.3) %>% 
+  select(-z,-se) %>% 
+  arrange(abs(est.std)) %>% 
+  # Just the loadings
+  filter(op == '=~')
+# with synthetic data bd04 should come up
+# as they are just random as can be seen from the corplot
+```
+
+
+
+
+```{r}
+lavaan::fitmeasures(fit.po01.cfa,c("npar","chisq","df","cfi","rmsea","srmr"))
+```
+
+https://stats.stackexchange.com/questions/541707/cfa-in-lavaan-wont-converge 
+"For the comparative fit indices CFI and TLI, you need at least >.900. For the absolute fit indices RMSEA and SRMR, you should have <.080."
+So ones from simulated data look good enough.
+
+```{r , fig.height=20}
+lavaanPlot(
+  fit.po01.cfa,
+   edge_options = list(color = "grey"),
+  coefs = TRUE,
+  graph_options = list(rankdir = "LR")
+           )
+```
+
+
+```{r}
+#Make a model with out prespesified correlation structure
+fit.po01.cfa.o <- cfa(po01.model,data.fit,orthogonal=TRUE)
+round(
+  sapply(list(cfa=fit.po01.cfa,cfa.o=fit.po01.cfa.o),
+         function(x) fitmeasures(x,c("npar","chisq","df","cfi","rmsea","srmr"))
+         )
+,3)
+
+#cfa should be better than cfa.o in all measures. cfi and chisq should be bigger, rmsea and srmr smaller in model cfa
+```
+
+
+## SEM
+
+### Sum score model
+
+```{r}
+#https://stats.stackexchange.com/questions/340857/serial-mediation-in-r-how-to-setup-the-model
+
+# N.B. you need to check that first item is positively correlated with your latent factor
+# Otherwise you get opposite direction 
+
+po02ss.model <- ' 
+#mediation
+ss_psycown ~ a1 *  bd02 
+ss_selfid ~ a2 * bd02 + d21 * ss_psycown
+
+#regression
+ss_intention ~  de01 + de02 + ie01 +  cp * bd02 + b1 * ss_psycown + b2 * ss_selfid
+
+ind_eff := a1* d21 * b2 
+'
+
+cat(po02ss.model)
+
+```
+
+
+```{r}
+if (fitmodels) {
+fit.po02ss <- sem(po02ss.model,  
+                    estimator = "MLR", # robust diagonally weighted least squares stable and should work with ordered factors
+                                 data = data.fit2,
+                auto.fix.first = FALSE, #  If TRUE, the factor loading of the first indicator is set to 1.0 for every latent variable. 
+                std.lv = TRUE, 
+                  )
+
+models[["fit.po02ss"]] <- fit.po02ss
+}
+
+lavaan::summary(fit.po02ss,standardized = TRUE)
+
+```
+
+```{r}
+varTable(fit.po02ss)
+```
+
+
+```{r}
+lavaan::inspect(fit.po02ss,"r2")
+```
+
+
+
+```{r}
+lavaan::standardizedsolution(fit.po02ss) %>% select(-label)
+# Use standardizedSolution to obtain SEs and test statistics for standardized estimates. 
+
+```
+
+```{r}
+lavaan::standardizedsolution(fit.po02ss) %>% select(-label,se,z) %>%  filter(op == '~')
+```
+
+
+
+```{r}
+
+fit.po02ss.est  <-standardizedSolution(fit.po02ss)
+fit.po02ss.est %>% 
+  filter(abs(est.std) < 0.3) %>% 
+  select(-z,-se) %>% 
+  arrange(abs(est.std)) %>% 
+  # Just the loadings
+  filter(op != '~1')
+
+```
+
+
+
+```{r}
+
+labelsforplottingnull <- c(
+  "ss_psycown" = "Psychological ownership",
+  "ss_selfid"  = "Self-identity",
+  "ss_intention" = "Intention",
+  "bd02" = "Blood donation history"
+)
+
+lavaanPlot(
+  model=fit.po02ss,  
+  coefs = TRUE,
+  node_options = list(shape = "box", fontname = "Helvetica"), 
+  edge_options = list(color = "grey"), 
+  labels = labelsforplottingnull,
+
+  #In simulated data there should be correlations inside
+  # bloodonor, psycown, selfid
+  # and between
+  # bloodonor, psycown
+  # and nothing else
+  sig = 0.001
+  # if sig is < 0.001 one gets significant correlations
+  # also from simulated data elsewhere suggesting that 0.05 is not enough
+  
+  )
+```
+
+```{r}
+# Same with standardised coefficients
+lavaanPlot(
+  model = fit.po02ss, 
+   labels = labelsforplottingnull,
+  node_options = list(shape = "box", fontname = "Helvetica"), 
+  edge_options = list(color = "grey"), 
+  coefs = TRUE, 
+  stand = TRUE,
+  sig=0.001
+  )
+```
+
+
+
+```{r}
+#semPlot::semPaths(fit.po02ss)
+```
+
+
+### SEM
+
+```{r}
+
+po02.model <- ' 
+#measurement model
+psycown =~ po01 + po02 + po03
+selfid =~ si01 + si02 + si03
+intention =~ it01 + it02 + it03
+blooddonor =~ bd02 + bd03 +bd04 
+#bd01 is just used for exclusion of "no"
+
+#mediation
+psycown ~ a1 *  blooddonor
+selfid ~ a2 * blooddonor + d21 * psycown
+
+#regression
+intention ~  de01 + de02 + ie01 +  cp * blooddonor + b1 * psycown + b2 * selfid
+ind_eff := a1* d21 * b2
+'
+
+cat(po02.model)
+
+```
+
+
+```{r}
+
+if (fitmodels) {
+fit.po02 <- sem(po02.model,  
+                    estimator = "MLR", # robust diagonally weighted least squares stable and should work with ordered factors
+                                 data = data.fit2,
+                auto.fix.first = FALSE,
+                std.lv = TRUE 
+                  )
+models[["fit.po02"]] <- fit.po02
+}
+lavaan::summary(fit.po02,standardized = TRUE)
+
+```
+
+```{r}
+varTable(fit.po02)
+```
+
+
+
+```{r}
+lavaan::inspect(fit.po02,"r2")
+```
+
+
+
+```{r}
+lavaan::standardizedsolution(fit.po02) %>% select(-label)
+# Use standardizedSolution to obtain SEs and test statistics for standardized estimates. 
+
+```
+
+```{r}
+lavaan::standardizedsolution(fit.po02) %>% select(-label,se,z) %>%  filter(op == '~')
+```
+
+
+
+```{r}
+
+fit.po02.est  <-standardizedSolution(fit.po02)
+fit.po02.est %>% 
+  filter(abs(est.std) < 0.3) %>% 
+  select(-z,-se) %>% 
+  arrange(abs(est.std)) %>% 
+  # Just the loadings
+  filter(op != '~1')
+
+```
+
+
+
+```{r}
+
+labelsforplotting <- c(
+  "psycown" = "Psychological ownership",
+  "selfid"  = "Self-identity",
+  "intention" = "Intention",
+  "blooddonor" = "Blood donation history"
+)
+
+lavaanPlot(
+  model=fit.po02,  
+  coefs = TRUE,
+  node_options = list(shape = "box", fontname = "Helvetica"), 
+  edge_options = list(color = "grey"), 
+  labels = labelsforplotting,
+
+  #In simulated data there should be correlations inside
+  # bloodonor, psycown, selfid
+  # and between
+  # bloodonor, psycown
+  # and nothing else
+  sig = 0.001
+  # if sig is < 0.001 one gets significant correlations
+  # also from simulated data elsewhere suggesting that 0.05 is not enough
+  
+  )
+```
+
+```{r}
+# Same with standardised coefficients
+lavaanPlot(
+  model = fit.po02, 
+   labels = labelsforplotting,
+  node_options = list(shape = "box", fontname = "Helvetica"), 
+  edge_options = list(color = "grey"), 
+  coefs = TRUE, 
+  stand = TRUE,
+  sig=0.001
+  )
+```
+
+
+
+### Sum score with bootstrapping
+
+```{r}
+nBoots <- 1000            
+
+if (fitmodels) {
+#fit
+
+# https://groups.google.com/g/lavaan/c/A6KCjXAZl-Q good example code
+
+fit.po03ss <- sem(po02ss.model,  
+                    estimator = "ML", # bootstrapping does not work with estimators designed for factors
+                    data = data.fit2, # data that is completely numeric
+                bootstrap = nBoots,
+                se = "boot",
+                auto.fix.first = FALSE,
+                std.lv = TRUE
+                )
+models[['fit.po03ss']] <- fit.po03ss
+}
+
+lavaan::summary(fit.po03ss,standardized = TRUE)
+
+```
+
+
+
+```{r}
+lavaanPlot(
+  model = fit.po03ss, 
+   labels = labelsforplottingnull,
+  node_options = list(shape = "box", fontname = "Helvetica"), 
+  edge_options = list(color = "grey"), 
+  coefs = TRUE, 
+  stand = TRUE,
+  sig=0.001
+  )
+
+
+```
+
+
+```{r}
+fit.po03ss.best <- parameterEstimates(fit.po03ss)
+fit.po03ss.best %>% select(-se,-z) %>% filter(op == "~")
+```
+
+
+
+### SEM with bootstrapping
+
+```{r}
+
+if (fitmodels) {
+#fit
+
+# https://groups.google.com/g/lavaan/c/A6KCjXAZl-Q good example code
+
+fit.po03 <- sem(po02.model,  
+                    estimator = "ML", # bootstrapping does not work with estimators designed for factors
+                    data = data.fit2, # data that is completely numeric
+                bootstrap = nBoots,
+                se = "boot",
+                auto.fix.first = FALSE,
+                std.lv = TRUE 
+                )
+models[['fit.po03']] <- fit.po03
+}
+
+lavaan::summary(fit.po03,standardized = TRUE)
+
+```
+
+
+
+```{r}
+lavaanPlot(
+  model = fit.po03, 
+   labels = labelsforplotting,
+  node_options = list(shape = "box", fontname = "Helvetica"), 
+  edge_options = list(color = "grey"), 
+  coefs = TRUE, 
+  stand = TRUE,
+  sig=0.001
+  )
+
+
+```
+
+```{r}
+fit.po03.best <- parameterEstimates(fit.po03)
+fit.po03.best %>% select(-se,-z) %>% filter(op == "~")
+```
+
+### SEM with Bayes
+
+
+```{r}
+po02b.model <- ' 
+#measurement model
+psycown =~ po01 + po02 + po03
+selfid =~ si01 + si02 + si03
+intention =~ it01 + it02 + it03
+blooddonor =~ bd02 + bd03 +bd04 
+
+# #mediation
+ psycown ~ a1 *  blooddonor
+ selfid ~ a2 * blooddonor + d21 * psycown
+# 
+# #regression
+ intention ~  de01 + de02 + ie01 +  cp * blooddonor + b1 * psycown + b2 * selfid
+ind_eff := a1* d21 * b2
+'
+
+cat(po02.model)
+
+```
+
+
+```{r}
+# This does not work!
+# #blavaan
+#tmp <- as.data.frame(data.fit2)
+ # fit.po04 <- blavaan(po02.model,  
+ #         #data = data.fit2,
+ #         data = tmp,
+ #         auto.fix.first = FALSE,
+ #         std.lv = TRUE
+ #)
+#Error in validObject(.Object) : 
+#invalid class “Fit” object: invalid object for slot "fx.group" in class "Fit": got class "NULL", should be or extend class "numeric"
+#We will try to fix this with real data
+```
+
+```{r}
+
+# #This works!
+# data(HolzingerSwineford1939, package = "lavaan")
+# # The Holzinger and Swineford (1939) example
+# HS.model <- ' visual  =~ x1 + x2 + x3
+#               textual =~ x4 + x5 + x6
+#               speed   =~ x7 + x8 + x9 '
+# 
+# fit <- blavaan(HS.model, data = HolzingerSwineford1939,
+#                auto.var = TRUE, auto.fix.first = TRUE,
+#                auto.cov.lv.x = TRUE)
+# summary(fit)
+# coef(fit)
+
+```
+
+
+## Compare models
+
+
+```{r}
+data.forest  <- fit.po03.best %>% 
+  mutate(estmet = "Factor analysis\nbootstrapped") %>%  
+  filter(op == "~") %>% 
+  bind_rows(
+    fit.po02.est %>% mutate(estmet = "Factor analysis") %>% 
+      rename(est=est.std) %>% 
+      filter(op == "~") 
+  ) %>% 
+  mutate(
+    term = str_c(label,":",lhs,op,rhs)
+    ) %>% 
+  arrange(estmet, term)
+
+data.forest  <- fit.po03ss.best %>% 
+  mutate(estmet = "Sum score\nbootstrapped") %>%  
+  filter(op == "~") %>% 
+  bind_rows(
+    fit.po02ss.est %>% mutate(estmet = "Sum score") %>% 
+      rename(est=est.std) %>% 
+      filter(op == "~") 
+  ) %>% 
+  mutate(
+    term = str_c(label,":",lhs,op,rhs)
+    ) %>% 
+  arrange(estmet, term) %>% 
+  bind_rows(data.forest) %>% 
+  mutate(
+    lhs =str_replace_all(lhs,"ss_",""),
+    rhs =str_replace_all(rhs,"ss_",""),
+    term =str_replace_all(term,"ss_",""),
+    estmet = as.factor(estmet),
+    hollow_group=factor(if_else(ci.lower<=0 & ci.upper>=0, NA_character_, as.character(estmet)),
+                             levels=levels(estmet))
+  )
+  
+
+
+
+pos <- position_nudge(y=as.numeric(as.factor(data.forest$estmet))/5 -0.5) 
+
+data.forest %>% 
+  ggplot(aes(est,xmin=ci.lower,xmax=ci.upper,y=term,fill=hollow_group,color=estmet))+
+  geom_vline(xintercept=0,color="grey") +
+  geom_linerange(position=pos)+
+  geom_point(shape=21,size=3,position=pos)+
+  scale_fill_discrete(na.value=NA, guide ="none") + 
+  labs(x="Standardised effect size",y="Relationship") +
+  labs(color="Model") +
+  geom_stripped_rows(color=NA) + theme_classic() 
+
+
+```
+
+
+
+```{r}
+
+round(
+  sapply(list(SS=fit.po02ss,SSB=fit.po03ss,FA=fit.po02,FAB=fit.po03 ),
+         function(x) fitmeasures(x,c("chisq","df","cfi","rmsea","srmr"))
+         )
+,3)
+
+```
+
+According to https://easystats.github.io/effectsize/reference/interpret_gfi.html
+
+
+"For structural equation models (SEM), Kline (2015) suggests that at a minimum the following indices should be reported: The model chi-square, the RMSEA, the CFI and the SRMR."
+
+chisq, Chi-squared, larger is better
+
+cfi Comparative Fit Index, "It should be > .96" , higher is better
+
+rmsea Root Mean Square Error of Approximation, "should be < .08", smaller is better
+
+srmr Standardized Root Mean Square Residual, "Should be < .08", smaller is better
+
+
+
+```{r}
+if (fitmodels) {
+  save(models,file=here(str_replace(str_c("results/",datafile),"\\.data\\.",".models.")))
+}
+```
+
