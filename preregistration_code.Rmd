@@ -1,20 +1,26 @@
 ---
 title: "Supplementary file 1: Preregistered analysis"
-author: "Abigail Edwards and Mikko Arvas"
+author: "Abigail Edwards, Lauri Hietajärvi and Mikko Arvas"
 date: "`r Sys.time()`"
 output:
-  html_document:
-    toc: yes
-    theme: united
   pdf_document:
     toc: yes
+
+always_allow_html: true
 ---
 
 TODO:
+ 
  -remove superfluous outputs
+ 
  -check discussion with Lauri, was there anything else to do?
+ 
  -check model saving
+ 
  -fill out the preregistration form
+ 
+ -are Abigail's sum score coefficients bootstrapped?
+ 
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(
@@ -31,6 +37,7 @@ library(corrplot)
 library(ggstats)
 library(lavaan)
 library(lavaanPlot)
+library(kableExtra)
 #library(semPlot) # update plots to semPlot later
 #library(blavaan) # could not get it to work with this model and synthetic data
 #library(tidySEM) # https://github.com/yrosseel/lavaan/issues/359 lavaan does not work if tidySEM is loaded.
@@ -59,169 +66,6 @@ if (!fitmodels) {
 
 ```
 
-
-Items
-<table>
-<tr>
-<td></td>
-<td> Psychological ownership</td>
-</tr>
-<tr>
-<td>po01</td>
-<td>
-1. I feel a very high degree of personal ownership of donating blood.
-</td>
-</tr>
-<tr>
-<td>po02</td>
-<td>
-2. I feel like donating blood belongs to me.
-</td> </tr>
-<tr>
-<td>po03</td> <td>
-3. I feel like I own donating blood.
-</td> </tr>
-<tr> <td></td>
-
-<td>
-Self-identity
-</td> </tr>
-<tr>
-<td>si01</td>
-<td>
-1. Donating blood is important to me.
-</td> <tr>
-<td>si02</td> <td>
-2. I am like the kind of person who donates blood.
-</td> </tr>
-<tr> <td>si03</td> 
-<td>
-3. Donating blood is an important part of who I am.
-</td> </tr>
-<tr> <td></td>
-
-<td>
-Intention
-</td></tr>
-<tr><td>it01</td>
-<td>
-1. I would like to donate blood in the future.
-</td>   </tr>
-<tr><td>it02</td>
-<td>
-2. I intend to donate blood in the future.
-</td> </tr>
-<tr><td>it03</td>
-
-<td>
-3. I intend to make more than just a one-off blood donation.
-</td></tr>
-<tr><td></td>
-<td>
-Intention to donate for emergency
-</td></tr>
-<tr><td>ie01</td>
-<td>
-1. I would be willing to donate blood if I received an urgent callout from the Finnish Red Cross Blood Service.
-</td></tr>
-<tr><td></td> 
-<td>
-Antecedents of psychological ownership
-</td></tr>
-<tr><td></td> 
-
-<td>
-Control
-</td></tr>
-<tr><td>ac01</td>
-<td>
-1. I have influence over the things that affect me while donating blood.
-</td></tr>
-<tr><td>ac02</td>
-<td>
-2. I control the location and scheduling for donating blood.
-</td></tr>
-<tr><td>ac03</td>
-<td>
-3. I influence decisions related to my blood donation.
-</td></tr>
-<tr><td>ac04</td>
-<td>
-4. In general, I have control over donating blood.
-</td></tr>
-<tr><td></td>
-<td>
-Intimate knowledge
-</td></tr>
-<tr><td>ai01</td>
-
-<td>
-1. I am intimately familiar with what is going on with regard to donating blood.
-</td></tr>
-<tr><td>ai02</td>
-<td>
-2. I have a depth of knowledge as it relates to donating blood.
-</td></tr>
-<tr><td>ai03</td>
-<td>
-3. I have a comprehensive understanding of donating blood.
-</td></tr>
-<tr><td>ai04</td>
-<td>
-4. I have a broad understanding of donating blood.
-</td></tr>
-<tr><td></td>
-
-<td>
-Self-Investment
-</td></tr>
-<tr><td>iv01</td>
-<td>
-1.	I have invested a major part of myself into donating blood.
-</td></tr>
-<tr><td>iv02</td>
-<td>
-2. I have invested a significant amount of my time into donating blood.
-</td></tr>
-<tr><td>iv03</td>
-<td>
-3. Overall, I invested a lot into donating blood.
-</td></tr>
-<tr><td></td>
-
-
-<td>
-Blood donation history
-</td></tr>
-<tr><td>bd01</td>
-<td>
-1. Do you believe that you are currently eligible to donate blood [yes, no, unsure]
-</td></tr>
-<tr><td>bd02</td>
-<td>
-2. How many times in total have you donated blood at the Finnish Red Cross Blood Service Finland? [select number]
-</td></tr>
-<tr><td>bd03</td>
-<td>
-3. How many times in the last two years have you donated at the Finnish Red Cross Blood Service? [select number]
-</td></tr>
-<tr><td>bd04</td>
-<td>
-4. When did you last attend a Finnish Red Cross blood donation centre with the intention of donating blood? [select date]
-</td></tr>
-<tr><td></td>
-
-<td>
-Demographics
-</td></tr>
-<tr><td>de01</td>
-<td>1. What is your gender? [man, woman, non-binary, prefer to not disclose, prefer to self-describe (open response)]
-</td></tr>
-<tr><td>de02</td>
-<td>
-2. How old are you today? [select number]
-</td></tr>
-</table>
 
 
 ```{r}
@@ -257,7 +101,7 @@ table1 <-
     
   ) %>%
   add_n()  # add column with total number of non-missing observations
-table1
+as_kable_extra(table1, format = "latex")
 ```
 
 
@@ -455,7 +299,7 @@ lavaanPlot(
    edge_options = list(color = "grey"),
   coefs = TRUE,
   graph_options = list(rankdir = "LR")
-           )
+           ) %>% lavaanPlot::embed_plot_pdf(here("figures/cfa01.pdf"))
 ```
 
 
@@ -576,7 +420,7 @@ lavaanPlot(
   # if sig is < 0.001 one gets significant correlations
   # also from simulated data elsewhere suggesting that 0.05 is not enough
   
-  )
+  ) %>% lavaanPlot::embed_plot_pdf(here("figures/plsssem01.pdf"))
 ```
 
 ```{r}
@@ -589,7 +433,7 @@ lavaanPlot(
   coefs = TRUE, 
   stand = TRUE,
   sig=0.001
-  )
+  ) %>% lavaanPlot::embed_plot_pdf(here("figures/plsssem02.pdf"))
 ```
 
 
@@ -703,7 +547,7 @@ lavaanPlot(
   # if sig is < 0.001 one gets significant correlations
   # also from simulated data elsewhere suggesting that 0.05 is not enough
   
-  )
+  ) %>% lavaanPlot::embed_plot_pdf(here("figures/pllvsem01.pdf"))
 ```
 
 ```{r}
@@ -716,7 +560,7 @@ lavaanPlot(
   coefs = TRUE, 
   stand = TRUE,
   sig=0.001
-  )
+  ) %>% lavaanPlot::embed_plot_pdf(here("figures/pllssem02.pdf"))
 ```
 
 
@@ -757,7 +601,7 @@ lavaanPlot(
   coefs = TRUE, 
   stand = TRUE,
   sig=0.001
-  )
+  ) %>% lavaanPlot::embed_plot_pdf(here("figures/plsssem03.pdf"))
 
 
 ```
@@ -805,7 +649,7 @@ lavaanPlot(
   coefs = TRUE, 
   stand = TRUE,
   sig=0.001
-  )
+  ) %>% lavaanPlot::embed_plot_pdf(here("figures/pllvsem03.pdf"))
 
 
 ```
@@ -960,7 +804,7 @@ srmr Standardized Root Mean Square Residual, "Should be < .08", smaller is bette
 
 ```{r}
 if (fitmodels) {
-  save(models,file=here(str_replace(str_c("results/",datafile),"\\.data\\.",".models.")))
+  save(models,file=here("prereg_models.rdata"))
 }
 ```
 

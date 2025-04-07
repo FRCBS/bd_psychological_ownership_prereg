@@ -1,22 +1,37 @@
 ---
-title           : "My preregistration for the COS Preregistration Challenge"
-shorttitle      : "My preregistration"
+title           : "Measuring psychological ownership and identity in a Finnish blood donor context"
+shorttitle      : "Donor ownership"
 date            : "`r Sys.setlocale('LC_TIME', 'C'); format(Sys.time(), '%d\\\\. %B %Y')`"
 
 author: 
-  - name        : First Author
+  - name        : Abigail Edwards
     affiliation : 1
-  - name        : Ernst-August Doelle
-    affiliation : "1,2"
+  - name        : Mikko Arvas
+    affiliation : 2
+  - name        : Lauri Hietajärvi
+    affiliation : 3    
+  - name        : Johanna Castrén
+    affiliation : 2
+  - name        : Barbara Masser
+    affiliation : 2
+    
 
 affiliation:
   - id          : 1
-    institution : Wilhelm-Wundt-University
+    institution : The University of Queensland, Australia 
   - id          : 2
-    institution : Konstanz Business School
+    institution : Finnish Red Cross Blood Service, Finland
+  - id          : 3
+    institution : University of Helsinki, Finland
+    
+header-includes:
+  - \usepackage{pdfpages}
 
 output: prereg::prereg_pdf
 ---
+
+
+5.2.2025 mail from Abby
 
 # Study Information
 
@@ -33,7 +48,11 @@ Example: Effect of sugar on brownie tastiness. -->
 
 Example: Though there is strong evidence to suggest that sugar affects taste preferences, the effect has never been demonstrated in brownies. Therefore, we will measure taste preference for four different levels of sugar concentration in a standard brownie recipe to determine if the effect exists in this pastry. -->
 
-Enter your response here.
+Having a donor self-identity is considered a key motivational factor for sustained blood donation behaviour (Callero, 1985; Ferguson et al., 2020). Within Identity Theory, when a new donor first gives blood they develop a role-identity (I am a blood donor). As a novice donor continues to donate, this role-identity is validated, and thus blood donation becomes part of a donor’s self-identity (Being a blood donor is an important part of who I am; Grube & Piliavin, 2000; Masser, White, Hyde, Terry, & Robinson, 2009). However, despite the link between donor self-identity and donor retention, there are currently no interventions which can foster a sense of identity in donors that do not rely exclusively on repeat donation behaviour. 
+Psychological ownership (this is mine) is the sense of ownership experienced over both material (e.g., blood collection agency) and abstract immaterial (e.g., blood donation behaviour) possessions (Pierce et al., 2001). The ownership volunteers experience over a non-profit organisation has been linked to sustained volunteering behaviour (Ainsworth, 2020). Further, psychological ownership is theoretically associated with identity as it has been proposed that through possession identity is established and maintained (Dittmar, 1992; Pierce et al., 2001). 
+In an Australian donor context, we have provided initial support for the idea that psychological ownership experienced towards a blood collection agency both increases with past donation experience and is positively associated with blood donor self-identity (Edwards et al., 2023). Further, in a series of semi-structured interviews we have shown that Australian blood donors primarily expressed ownership over the blood donation process (role behaviour), not the blood collection agency (organisation). As such, interventions that enhance the amount of psychological ownership donors experience over their donation have the potential to impact donor retention. 
+
+FRCBS
 
 
 ## Hypotheses
@@ -41,35 +60,27 @@ Enter your response here.
 
 Example: If taste affects preference, then mean preference indices will be higher with higher concentrations of sugar. -->
 
-Enter your response here.
+1. The blood donors reported psychological ownership over FRCBS is positively associated with self-identity, which, in turn, is positively associated with intentions to donate blood. That is the lower bound of effect estimate of 95% standardized confidence or credible interval of the indirect pathway between past behavior and intention via both psychological ownership and self-identity (ind_eff =  a1* d21 * b2) is higher than zero. 
+
+2. Psychological ownership over FRCBS increases with donation experience. That is the lower bound of effect estimate of 95% standardized confidence or credible interval of direct effect of past donation behavior to psychological ownership is higher than zero.
 
 
 # Design Plan
 <!-- In this section, you will be asked to describe the overall design of your study. Remember that this research plan is designed to register a single study, so if you have multiple experimental designs, please complete a separate preregistration. -->
 
 
+
 ## Study type
 
-**Experiment**. A researcher randomly assigns treatments to study subjects, this includes field or lab experiments. This is also known as an intervention experiment and includes randomized controlled trials.
 
 **Observational Study**. Data is collected from study subjects that are not randomly assigned to a treatment. This includes surveys, natural experiments, and regression discontinuity designs.
 
-**Meta-Analysis**. A systematic review of published studies.
-
-**Other**. Please explain.
 
 
 ## Blinding
 <!-- Blinding describes who is aware of the experimental manipulations within a study. Select all that apply. Is there any additional blinding in this study? -->
 
 No blinding is involved in this study.
-
-For studies that involve human subjects, they will not know the treatment group to which they have been assigned.
-
-Personnel who interact directly with the study subjects (either human or non-human subjects) will not be aware of the assigned treatments.
-
-Personnel who analyze the data collected from the study are not aware of the treatment applied to any given group.
-
 
 ## Study design
 <!-- Describe your study design. Examples include two-group, factorial, randomized block, and repeated measures. Is it a between (unpaired), within-subject (paired), or mixed design? Describe any counterbalancing required. Typical study designs for observation studies include cohort, cross sectional, and case-control studies.
@@ -78,16 +89,14 @@ This question has a variety of possible answers. The key is for a researcher to 
 
 Example: We have a between subjects design with 1 factor (sugar by mass) with 4 levels. -->
 
-Enter your response here.
-
+Cross sectional survey stud ymodelled with a structural equation model.
 
 ## Randomization
 <!-- If you are doing a randomized study, how will you randomize, and at what level? Typical randomization techniques include: simple, block, stratified, and adaptive covariate randomization. If randomization is required for the study, the method should be specified here, not simply the source of random numbers.
 
 Example: We will use block randomization, where each participant will be randomly assigned to one of the four equally sized, predetermined blocks. The random number list used to create these four blocks will be created using the web applications available at https://random.org. -->
 
-Enter your response here.
-
+A set of blood donors will be randomly selected from all active blood donors in FRBS register.
 
 # Sampling Plan
 <!-- In this section we’ll ask you to describe how you plan to collect samples, as well as the number of samples you plan to collect and your rationale for this decision. Please keep in mind that the data described in this section should be the actual data used for analysis, so if you are using a subset of a larger dataset, please describe the subset that will actually be used in your study. -->
@@ -98,15 +107,6 @@ Enter your response here.
 
 **Registration prior to creation of data**. As of the date of submission of this research plan for preregistration, the data have not yet been collected, created, or realized. 
 
-**Registration prior to any human observation of the data**. As of the date of submission, the data exist but have not yet been quantified, constructed, observed, or reported by anyone - including individuals that are not associated with the proposed study. Examples include museum specimens that have not been measured and data that have been collected by non-human collectors and are inaccessible.
-
-**Registration prior to accessing the data**. As of the date of submission, the data exist, but have not been accessed by you or your collaborators. Commonly, this includes data that has been collected by another researcher or institution.
-
-**Registration prior to analysis of the data**. As of the date of submission, the data exist and you have accessed it, though no analysis has been conducted related to the research plan (including calculation of summary statistics). A common situation for this scenario when a large dataset exists that is used for many different studies over time, or when a data set is randomly split into a sample for exploratory analyses, and the other section of data is reserved for later confirmatory data analysis.
-
-**Registration following analysis of the data**. As of the date of submission, you have accessed and analyzed some of the data relevant to the research plan. This includes preliminary analysis of variables, calculation of descriptive statistics, and observation of data distributions. Please see https://cos.io/prereg for more information.
-
-
 
 ## Explanation of existing data
 <!-- If you indicate that you will be using some data that already exist in this study, please describe the steps you have taken to assure that you are unaware of any patterns or summary statistics in the data. This may include an explanation of how access to the data has been limited, who has observed the data, or how you have avoided observing any analysis of the specific data you will use in your study.
@@ -115,8 +115,7 @@ An appropriate instance of using existing data would be collecting a sample size
 
 Example: An appropriate instance of using existing data would be collecting a sample size much larger than is required for the study, using a small portion of it to conduct exploratory analysis, and then registering one particular analysis that showed promising results. After registration, conduct the specified analysis on that part of the dataset that had not been investigated by the researcher up to that point. -->
 
-Enter your response here.
-
+No pre-exisiting data is used.
 
 ## Data collection procedures
 <!-- Please describe the process by which you will collect your data. If you are using human subjects, this should include the population from which you obtain subjects, recruitment efforts, payment for participation, how subjects will be selected for eligibility from the initial pool (e.g. inclusion and exclusion rules), and your study timeline. For studies that donÍt include human subjects, include information about how you will collect samples, duration of data gathering efforts, source or location of samples, or batch numbers you will use.
@@ -125,7 +124,7 @@ The answer to this question requires a specific set of instructions so that anot
 
 Example: Participants will be recruited through advertisements at local pastry shops. Participants will be paid $10 for agreeing to participate (raised to $30 if our sample size is not reached within 15 days of beginning recruitment). Participants must be at least 18 years old and be able to eat the ingredients of the pastries. -->
 
-Enter your response here.
+An e-mail inviting to fill an online questionnaire will be sent to the randomly selected blood donors. No recompensation will be offered to participants.Participants must be between 18 and 65 years old.
 
 
 ## Sample size
@@ -133,7 +132,7 @@ Enter your response here.
 
 Example: Our target sample size is 280 participants. We will attempt to recruit up to 320, assuming that not all will complete the total task. -->
 
-Enter your response here.
+Our target sample size is 1000 participants.
 
 
 ## Sample size rationale
@@ -141,8 +140,7 @@ Enter your response here.
 
 Example: We used the software program G*Power to conduct a power analysis. Our goal was to obtain .95 power to detect a medium effect size of .25 at the standard .05 alpha error probability. -->
 
-Enter your response here.
-
+The blood donor participants (n = 255) and the standardised regression coefficients from our previous serial mediation model (Edwards et al., 2023), were imputed into a Monte Carlo Power analysis for indirect effects (Schoemann, Boulton, & Short, 2017) to estimate sample size. For an alpha set at .05, usable data from 369 participants is required to achieve .9 power for our intended serial mediation model. With a target sample of 1000 participants we hope to carry out sex stratified analysis and further exploratory analysis.
 
 ## Stopping rule
 <!-- If your data collection procedures do not give you full control over your exact sample size, specify how you will decide when to terminate your data collection. 
@@ -164,8 +162,18 @@ Enter your response here.
 
 Example: We manipulated the percentage of sugar by mass added to brownies. The four levels of this categorical variable are: 15%, 20%, 25%, or 40% cane sugar by mass. -->
 
-Enter your response here.
+All likert scale measured variables will be treated as numeric as well number of life time donations (bd02) and number of donations in last years (bd03). Last donation date (bd04) will transformed "bd04 / 10^-(2 - str_length(as.numeric(max(bd04))))". 
+ 
+For sum score model latent variables will be formed by summing measured items
 
+Psychological ownership = po01 + po02 + po03
+
+Self-identity           = si01 + si02 + si03
+
+Intention               = it01 + it02 + it03
+
+For structural equation models using latent variables  
+  
 
 ## Measured variables
 <!-- Describe each variable that you will measure. This will include outcome measures, as well as any predictors or covariates that you will measure. You do not need to include any variables that you plan on collecting if they are not going to be included in the confirmatory analyses of this study.
@@ -176,6 +184,164 @@ Example: The single outcome variable will be the perceived tastiness of the sing
 
 Enter your response here.
 
+Items
+<table>
+<tr>
+<td></td>
+<td>Psychological ownership</td>
+</tr>
+<tr>
+<td>
+po01 1. I feel a very high degree of personal ownership of donating blood.
+</td>
+</tr>
+<td>
+po02 2. I feel like donating blood belongs to me.
+</td> </tr>
+<tr>
+<td>
+po03 3. I feel like I own donating blood.
+</td> </tr>
+<tr> <td></td>
+
+<td>
+Self-identity
+</td> </tr>
+<tr>
+<td>
+si01 1. Donating blood is important to me.
+</td> <tr>
+si02 2. I am like the kind of person who donates blood.
+</td> </tr>
+<tr> 
+<td>
+si03 3. Donating blood is an important part of who I am.
+</td> </tr>
+<tr> <td></td>
+
+<td>
+Intention
+</td></tr>
+<tr>
+<td>
+it01 1. I would like to donate blood in the future.
+</td>   </tr>
+<tr>
+<td>
+it02 2. I intend to donate blood in the future.
+</td> </tr>
+<tr>
+<td>
+it03 3. I intend to make more than just a one-off blood donation.
+</td></tr>
+<tr><td></td>
+<td>
+Intention to donate for emergency
+</td></tr>
+<tr>
+<td>
+ie01 1. I would be willing to donate blood if I received an urgent callout from the Finnish Red Cross Blood Service.
+</td></tr>
+<tr><td></td> 
+<td>
+Antecedents of psychological ownership
+</td></tr>
+<tr><td></td> 
+
+<td>
+Control
+</td></tr>
+<tr>
+<td>
+ac01  1. I have influence over the things that affect me while donating blood.
+</td></tr>
+<tr>
+<td>
+ac02 2. I control the location and scheduling for donating blood.
+</td></tr>
+<tr>
+<td>
+ac03 3. I influence decisions related to my blood donation.
+</td></tr>
+<tr>
+<td>
+ac04 4. In general, I have control over donating blood.
+</td></tr>
+<tr><td></td>
+<td>
+Intimate knowledge
+</td></tr>
+<tr>
+<td>
+ai01 1. I am intimately familiar with what is going on with regard to donating blood.
+</td></tr>
+<tr>
+<td>
+ai02 2. I have a depth of knowledge as it relates to donating blood.
+</td></tr>
+<tr>
+<td>
+ai03 3. I have a comprehensive understanding of donating blood.
+</td></tr>
+<tr>
+<td>
+ai04 4. I have a broad understanding of donating blood.
+</td></tr>
+<tr><td></td>
+
+<td>
+Self-Investment
+</td></tr>
+<td>
+iv01 1.	I have invested a major part of myself into donating blood.
+</td></tr>
+<tr>
+<td>
+iv02 2. I have invested a significant amount of my time into donating blood.
+</td></tr>
+<tr>
+<td>
+iv03 3. Overall, I invested a lot into donating blood.
+</td></tr>
+<tr><td></td>
+
+
+<td>
+Blood donation history
+</td></tr>
+<tr>
+<td>
+bd01 1. Do you believe that you are currently eligible to donate blood [yes, no, unsure]
+</td></tr>
+<tr>
+<td>
+bd02 2. How many times in total have you donated blood at the Finnish Red Cross Blood Service Finland? [select number]
+</td></tr>
+<tr>
+<td>
+bd03 3. How many times in the last two years have you donated at the Finnish Red Cross Blood Service? [select number]
+</td></tr>
+<tr>
+<td>
+bd04 4. When did you last attend a Finnish Red Cross blood donation centre with the intention of donating blood? [select date]
+</td></tr>
+<tr><td></td>
+
+<td>
+Demographics
+</td></tr>
+<tr>
+<td>
+de01 1. What is your gender? [man, woman, non-binary, prefer to not disclose, prefer to self-describe (open response)]
+</td></tr>
+<tr>
+<td>
+de02 2. How old are you today? [select number]
+</td></tr>
+</table>
+
+
+
 
 ## Indices
 <!-- If any measurements are  going to be combined into an index (or even a mean), what measures will you use and how will they be combined? Include either a formula or a precise description of your method. If your are using a more complicated statistical method to combine measures (e.g. a factor analysis), you can note that here but describe the exact method in the analysis plan section.
@@ -184,13 +350,15 @@ If you are using multiple pieces of data to construct a single variable, how wil
 
 Example: We will take the mean of the two questions above to create a single measure of 'brownie enjoyment.'  -->
 
-Enter your response here.
+sum scores and latent variables
 
 
 # Analysis Plan
 <!-- You may describe one or more confirmatory analysis in this preregistration. Please remember that all analyses specified below must be reported in the final article, and any additional analyses must be noted as exploratory or hypothesis generating.
 
 A confirmatory analysis plan must state up front which variables are predictors (independent) and which are the outcomes (dependent), otherwise it is an exploratory analysis. You are allowed to describe any exploratory work here, but a clear confirmatory analysis is required. -->
+
+Bivariate correlations will be calculated between all primary variables included in the survey (past behaviour, psychological ownership, self-identity, intention). Following this, a serial mediation will be conducted. Previous blood donation behaviour (from the last two years) will be entered as the causal variable, psychological ownership and then identity as the serial mediators, and blood donation intentions as the outcome variable. 
 
 
 ## Statistical models
@@ -203,7 +371,7 @@ This is perhaps the most important and most complicated question within the prer
 
 Example:  We will use a one-way between subjects ANOVA to analyze our results. The manipulated, categorical independent variable is 'sugar' whereas the dependent variable is our taste index. -->
 
-Enter your response here.
+SEM include R from preregistartion code
 
 
 ## Transformations
@@ -211,7 +379,7 @@ Enter your response here.
 
 Example: The "Effect of sugar on brownie tastiness" does not require any additional transformations. However, if it were using a regression analysis and each level of sweet had been categorically described (e.g. not sweet, somewhat sweet, sweet, and very sweet), 'sweet' could be dummy coded with 'not sweet' as the reference category. -->
 
-Enter your response here.
+as numeric
 
 
 ## Inference criteria
@@ -221,13 +389,15 @@ p-values, confidence intervals, and effect sizes are standard means for making a
 
 Example: We will use the standard p<.05 criteria for determining if the ANOVA and the post hoc test suggest that the results are significantly different from those expected if the null hypothesis were correct. The post-hoc Tukey-Kramer test adjusts for multiple comparisons. -->
 
+model selection and then ci
+
 
 ## Data exclusion
 <!-- How will you determine what data or samples, if any, to exclude from your analyses? How will outliers be handled? Will you use any awareness check? Any rule for excluding a particular set of data is acceptable. One may describe rules for excluding a participant or for identifying outlier data.
 
 Example: No checks will be performed to determine eligibility for inclusion besides verification that each subject answered each of the three tastiness indices. Outliers will be included in the analysis. -->
 
-Enter your response here.
+All donors answering to question 
 
 
 ## Missing data
@@ -243,16 +413,16 @@ Enter your response here.
 
 Example: We expect that certain demographic traits may be related to taste preferences. Therefore, we will look for relationships between demographic variables (age, gender, income, and marital status) and the primary outcome measures of taste preferences. -->
 
-Enter your response here.
+Qualitative content analysis will be conducted on participants answers to the open-response question (What do you remember about the first time you donated blood?). Bivariate correlations will be calculated to compare donors’ willingness to respond to a call-out to past blood donation behaviour, psychological ownership, self-identity, and intention to donate blood.  
 
 
 # Other
 
-## Other (Optional)
+## Other 
 <!-- If there is any additional information that you feel needs to be included in your preregistration, please enter it here. Literature cited, disclosures of any related work such as replications or work that uses the same data, or other context that will be helpful for future readers would be appropriate here. -->
 
-Enter your response here.
 
+\includepdf[pages={-}]{preregistration_code.pdf}
 
 # References
 ## 
