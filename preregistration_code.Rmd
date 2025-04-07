@@ -14,7 +14,6 @@ TODO:
  -remove superfluous outputs
  -check discussion with Lauri, was there anything else to do?
  -check model saving
- -which format to manuscript file
  -fill out the preregistration form
 
 ```{r setup, include=FALSE}
@@ -880,11 +879,11 @@ cat(po02.model)
 ```{r}
 data.forest  <- fit.po03.best %>% 
   mutate(estmet = "Factor analysis\nbootstrapped") %>%  
-  filter(op == "~") %>% 
+  filter(op == "~" | op == ":=") %>% 
   bind_rows(
     fit.po02.est %>% mutate(estmet = "Factor analysis") %>% 
       rename(est=est.std) %>% 
-      filter(op == "~") 
+      filter(op == "~"| op == ":=") 
   ) %>% 
   mutate(
     term = str_c(label,":",lhs,op,rhs)
@@ -893,11 +892,11 @@ data.forest  <- fit.po03.best %>%
 
 data.forest  <- fit.po03ss.best %>% 
   mutate(estmet = "Sum score\nbootstrapped") %>%  
-  filter(op == "~") %>% 
+  filter(op == "~"| op == ":=") %>% 
   bind_rows(
     fit.po02ss.est %>% mutate(estmet = "Sum score") %>% 
       rename(est=est.std) %>% 
-      filter(op == "~") 
+      filter(op == "~"| op == ":=") 
   ) %>% 
   mutate(
     term = str_c(label,":",lhs,op,rhs)
@@ -908,6 +907,7 @@ data.forest  <- fit.po03ss.best %>%
     lhs =str_replace_all(lhs,"ss_",""),
     rhs =str_replace_all(rhs,"ss_",""),
     term =str_replace_all(term,"ss_",""),
+    term =str_replace_all(term,"ind_eff:ind_eff:","ind_eff:"),
     estmet = as.factor(estmet),
     hollow_group=factor(if_else(ci.lower<=0 & ci.upper>=0, NA_character_, as.character(estmet)),
                              levels=levels(estmet))
