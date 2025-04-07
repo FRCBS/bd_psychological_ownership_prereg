@@ -33,6 +33,11 @@ output: prereg::prereg_pdf
 
 5.2.2025 mail from Abby
 
+TODO:
+
+- references
+
+
 # Study Information
 
 ## Title
@@ -51,8 +56,7 @@ Example: Though there is strong evidence to suggest that sugar affects taste pre
 Having a donor self-identity is considered a key motivational factor for sustained blood donation behaviour (Callero, 1985; Ferguson et al., 2020). Within Identity Theory, when a new donor first gives blood they develop a role-identity (I am a blood donor). As a novice donor continues to donate, this role-identity is validated, and thus blood donation becomes part of a donor’s self-identity (Being a blood donor is an important part of who I am; Grube & Piliavin, 2000; Masser, White, Hyde, Terry, & Robinson, 2009). However, despite the link between donor self-identity and donor retention, there are currently no interventions which can foster a sense of identity in donors that do not rely exclusively on repeat donation behaviour. 
 Psychological ownership (this is mine) is the sense of ownership experienced over both material (e.g., blood collection agency) and abstract immaterial (e.g., blood donation behaviour) possessions (Pierce et al., 2001). The ownership volunteers experience over a non-profit organisation has been linked to sustained volunteering behaviour (Ainsworth, 2020). Further, psychological ownership is theoretically associated with identity as it has been proposed that through possession identity is established and maintained (Dittmar, 1992; Pierce et al., 2001). 
 In an Australian donor context, we have provided initial support for the idea that psychological ownership experienced towards a blood collection agency both increases with past donation experience and is positively associated with blood donor self-identity (Edwards et al., 2023). Further, in a series of semi-structured interviews we have shown that Australian blood donors primarily expressed ownership over the blood donation process (role behaviour), not the blood collection agency (organisation). As such, interventions that enhance the amount of psychological ownership donors experience over their donation have the potential to impact donor retention. 
-
-FRCBS
+In this study we try to repeat results from Edwards et al., 2023 in Finland by collecting similar questionnaire data and analysing them with a structural equation model. We include pre-registered R analysis code for direct repetition of Edwards et al., 2023 in Appendix 1.
 
 
 ## Hypotheses
@@ -389,7 +393,18 @@ p-values, confidence intervals, and effect sizes are standard means for making a
 
 Example: We will use the standard p<.05 criteria for determining if the ANOVA and the post hoc test suggest that the results are significantly different from those expected if the null hypothesis were correct. The post-hoc Tukey-Kramer test adjusts for multiple comparisons. -->
 
-model selection and then ci
+We will model the hypothesis through alternative models:
+
+a. Sum score model with robust estimator
+
+b. Sum score model with bootstrapping
+
+c. Latent factor model with robust estimator
+
+d. Latent factor model with boostrapping
+
+Among 
+
 
 
 ## Data exclusion
@@ -397,7 +412,7 @@ model selection and then ci
 
 Example: No checks will be performed to determine eligibility for inclusion besides verification that each subject answered each of the three tastiness indices. Outliers will be included in the analysis. -->
 
-All donors answering to question 
+All donors answering to question de01 other than "man" or "women" will be excluded as donation policies depend on sex. All donors answering to question bd01 "no" will be excluded as we are interested in person eligible to donate.
 
 
 ## Missing data
@@ -405,7 +420,7 @@ All donors answering to question
 
 Example: If a subject does not complete any of the three indices of tastiness, that subject will not be included in the analysis. -->
 
-Enter your response here.
+The survey platform only reports completed questionnaires and all questions are obligatory. Hence there will be no missing data.
 
 
 ## Exploratory analyses (optional)
