@@ -699,6 +699,8 @@ data.forest  <- fit.po03ss.best %>%
     rhs =str_replace_all(rhs,"ss_",""),
     term =str_replace_all(term,"ss_",""),
     term =str_replace_all(term,"ind_eff:ind_eff:","ind_eff:"),
+    term =str_replace_all(term,"bd02","blooddonor:"),
+    term =str_replace_all(term,"blooddonor:","blooddonor"),
     estmet = as.factor(estmet),
     hollow_group=factor(if_else(ci.lower<=0 & ci.upper>=0, NA_character_, as.character(estmet)),
                              levels=levels(estmet))

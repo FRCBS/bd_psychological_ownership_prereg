@@ -33,6 +33,7 @@ output: prereg::prereg_pdf
 
 5.2.2025 mail from Abby
 
+
 TODO:
 
 - references
@@ -66,7 +67,7 @@ Example: If taste affects preference, then mean preference indices will be highe
 
 1. The blood donors reported psychological ownership over FRCBS is positively associated with self-identity, which, in turn, is positively associated with intentions to donate blood. That is the lower bound of effect estimate of 95% standardized confidence or credible interval of the indirect pathway between past behavior and intention via both psychological ownership and self-identity (ind_eff =  a1* d21 * b2) is higher than zero. 
 
-2. Psychological ownership over FRCBS increases with donation experience. That is the lower bound of effect estimate of 95% standardized confidence or credible interval of direct effect of past donation behavior to psychological ownership is higher than zero.
+2. Psychological ownership over FRCBS increases with donation experience. That is the lower bound of effect estimate of 95% standardized confidence or credible interval of direct effect of past donation behavior to psychological ownership (a1) is higher than zero.
 
 
 # Design Plan
@@ -93,17 +94,18 @@ This question has a variety of possible answers. The key is for a researcher to 
 
 Example: We have a between subjects design with 1 factor (sugar by mass) with 4 levels. -->
 
-Cross sectional survey stud ymodelled with a structural equation model.
+Cross sectional survey study modelled with a structural equation model.
 
 ## Randomization
 <!-- If you are doing a randomized study, how will you randomize, and at what level? Typical randomization techniques include: simple, block, stratified, and adaptive covariate randomization. If randomization is required for the study, the method should be specified here, not simply the source of random numbers.
 
 Example: We will use block randomization, where each participant will be randomly assigned to one of the four equally sized, predetermined blocks. The random number list used to create these four blocks will be created using the web applications available at https://random.org. -->
 
-A set of blood donors will be randomly selected from all active blood donors in FRBS register.
+A set of blood donors will be randomly selected from all blood donors in FRCBS register who have donated at least once during the 730 preceding the day the questionnaire e-mail will be sent i.e. 5.5.2025 .
 
 # Sampling Plan
 <!-- In this section we’ll ask you to describe how you plan to collect samples, as well as the number of samples you plan to collect and your rationale for this decision. Please keep in mind that the data described in this section should be the actual data used for analysis, so if you are using a subset of a larger dataset, please describe the subset that will actually be used in your study. -->
+
 
 
 ## Existing data
@@ -128,7 +130,7 @@ The answer to this question requires a specific set of instructions so that anot
 
 Example: Participants will be recruited through advertisements at local pastry shops. Participants will be paid $10 for agreeing to participate (raised to $30 if our sample size is not reached within 15 days of beginning recruitment). Participants must be at least 18 years old and be able to eat the ingredients of the pastries. -->
 
-An e-mail inviting to fill an online questionnaire will be sent to the randomly selected blood donors. No recompensation will be offered to participants.Participants must be between 18 and 65 years old.
+An e-mail inviting to fill an online questionnaire will be sent to the randomly selected blood donors. No recompensation will be offered to participants.Participants must be between 18 and 72 years old.
 
 
 ## Sample size
@@ -136,7 +138,7 @@ An e-mail inviting to fill an online questionnaire will be sent to the randomly 
 
 Example: Our target sample size is 280 participants. We will attempt to recruit up to 320, assuming that not all will complete the total task. -->
 
-Our target sample size is 1000 participants.
+Our target sample size is 1000 participants. Based on previous participation rates an email will be sent to 5000 random donors.
 
 
 ## Sample size rationale
@@ -153,7 +155,7 @@ You may specify a stopping rule based on p-values only in the specific case of s
 
 Example: We will post participant sign-up slots by week on the preceding Friday night, with 20 spots posted per week. We will post 20 new slots each week if, on that Friday night, we are below 320 participants. -->
 
-Enter your response here.
+The online questionnaire will be open for 2 weeks i.e. from 5.5.2025 - to 18.5.2025.
 
 
 
@@ -166,18 +168,6 @@ Enter your response here.
 
 Example: We manipulated the percentage of sugar by mass added to brownies. The four levels of this categorical variable are: 15%, 20%, 25%, or 40% cane sugar by mass. -->
 
-All likert scale measured variables will be treated as numeric as well number of life time donations (bd02) and number of donations in last years (bd03). Last donation date (bd04) will transformed "bd04 / 10^-(2 - str_length(as.numeric(max(bd04))))". 
- 
-For sum score model latent variables will be formed by summing measured items
-
-Psychological ownership = po01 + po02 + po03
-
-Self-identity           = si01 + si02 + si03
-
-Intention               = it01 + it02 + it03
-
-For structural equation models using latent variables  
-  
 
 ## Measured variables
 <!-- Describe each variable that you will measure. This will include outcome measures, as well as any predictors or covariates that you will measure. You do not need to include any variables that you plan on collecting if they are not going to be included in the confirmatory analyses of this study.
@@ -186,9 +176,9 @@ Observational studies and meta-analyses will include only measured variables. As
 
 Example: The single outcome variable will be the perceived tastiness of the single brownie each participant will eat. We will measure this by asking participants ‘How much did you enjoy eating the brownie’ (on a scale of 1-7, 1 being 'not at all', 7 being 'a great deal') and 'How good did the brownie taste' (on a scale of 1-7, 1 being 'very bad', 7 being 'very good'). -->
 
-Enter your response here.
+All Likert items are scored 1 (strongly disagree) to 7 (strongly agree).
 
-Items
+Items:
 <table>
 <tr>
 <td></td>
@@ -196,15 +186,15 @@ Items
 </tr>
 <tr>
 <td>
-po01 1. I feel a very high degree of personal ownership of donating blood.
+po01 1. I feel a very high degree of personal ownership of donating blood. [Likert]
 </td>
 </tr>
 <td>
-po02 2. I feel like donating blood belongs to me.
+po02 2. I feel like donating blood belongs to me. [Likert]
 </td> </tr>
 <tr>
 <td>
-po03 3. I feel like I own donating blood.
+po03 3. I feel like I own donating blood. [Likert]
 </td> </tr>
 <tr> <td></td>
 
@@ -213,13 +203,13 @@ Self-identity
 </td> </tr>
 <tr>
 <td>
-si01 1. Donating blood is important to me.
+si01 1. Donating blood is important to me. [Likert]
 </td> <tr>
-si02 2. I am like the kind of person who donates blood.
+si02 2. I am like the kind of person who donates blood. [Likert]
 </td> </tr>
 <tr> 
 <td>
-si03 3. Donating blood is an important part of who I am.
+si03 3. Donating blood is an important part of who I am. [Likert]
 </td> </tr>
 <tr> <td></td>
 
@@ -228,15 +218,15 @@ Intention
 </td></tr>
 <tr>
 <td>
-it01 1. I would like to donate blood in the future.
+it01 1. I would like to donate blood in the future. [Likert]
 </td>   </tr>
 <tr>
 <td>
-it02 2. I intend to donate blood in the future.
+it02 2. I intend to donate blood in the future. [Likert]
 </td> </tr>
 <tr>
 <td>
-it03 3. I intend to make more than just a one-off blood donation.
+it03 3. I intend to make more than just a one-off blood donation. [Likert]
 </td></tr>
 <tr><td></td>
 <td>
@@ -244,7 +234,7 @@ Intention to donate for emergency
 </td></tr>
 <tr>
 <td>
-ie01 1. I would be willing to donate blood if I received an urgent callout from the Finnish Red Cross Blood Service.
+ie01 1. I would be willing to donate blood if I received an urgent callout from the Finnish Red Cross Blood Service. [Likert]
 </td></tr>
 <tr><td></td> 
 <td>
@@ -257,19 +247,19 @@ Control
 </td></tr>
 <tr>
 <td>
-ac01  1. I have influence over the things that affect me while donating blood.
+ac01  1. I have influence over the things that affect me while donating blood. [Likert]
 </td></tr>
 <tr>
 <td>
-ac02 2. I control the location and scheduling for donating blood.
+ac02 2. I control the location and scheduling for donating blood. [Likert]
 </td></tr>
 <tr>
 <td>
-ac03 3. I influence decisions related to my blood donation.
+ac03 3. I influence decisions related to my blood donation. [Likert]
 </td></tr>
 <tr>
 <td>
-ac04 4. In general, I have control over donating blood.
+ac04 4. In general, I have control over donating blood. [Likert]
 </td></tr>
 <tr><td></td>
 <td>
@@ -277,19 +267,19 @@ Intimate knowledge
 </td></tr>
 <tr>
 <td>
-ai01 1. I am intimately familiar with what is going on with regard to donating blood.
+ai01 1. I am intimately familiar with what is going on with regard to donating blood. [Likert]
 </td></tr>
 <tr>
 <td>
-ai02 2. I have a depth of knowledge as it relates to donating blood.
+ai02 2. I have a depth of knowledge as it relates to donating blood. [Likert]
 </td></tr>
 <tr>
 <td>
-ai03 3. I have a comprehensive understanding of donating blood.
+ai03 3. I have a comprehensive understanding of donating blood. [Likert]
 </td></tr>
 <tr>
 <td>
-ai04 4. I have a broad understanding of donating blood.
+ai04 4. I have a broad understanding of donating blood. [Likert]
 </td></tr>
 <tr><td></td>
 
@@ -297,15 +287,15 @@ ai04 4. I have a broad understanding of donating blood.
 Self-Investment
 </td></tr>
 <td>
-iv01 1.	I have invested a major part of myself into donating blood.
+iv01 1.	I have invested a major part of myself into donating blood. [Likert]
 </td></tr>
 <tr>
 <td>
-iv02 2. I have invested a significant amount of my time into donating blood.
+iv02 2. I have invested a significant amount of my time into donating blood. [Likert]
 </td></tr>
 <tr>
 <td>
-iv03 3. Overall, I invested a lot into donating blood.
+iv03 3. Overall, I invested a lot into donating blood. [Likert]
 </td></tr>
 <tr><td></td>
 
@@ -354,7 +344,18 @@ If you are using multiple pieces of data to construct a single variable, how wil
 
 Example: We will take the mean of the two questions above to create a single measure of 'brownie enjoyment.'  -->
 
-sum scores and latent variables
+For sum score model latent variables will be formed by summing measured items:
+
+Psychological ownership = po01 + po02 + po03
+
+Self-identity           = si01 + si02 + si03
+
+Intention               = it01 + it02 + it03
+
+For structural equation models using latent variables the same variables will be used as constituent items of the latent variable. Instead of using just question bd02 as in the original publication a donation history latent variable will be formed as:
+
+Blood donation history = bd02 + bd03 + bd04
+
 
 
 # Analysis Plan
@@ -375,7 +376,8 @@ This is perhaps the most important and most complicated question within the prer
 
 Example:  We will use a one-way between subjects ANOVA to analyze our results. The manipulated, categorical independent variable is 'sugar' whereas the dependent variable is our taste index. -->
 
-SEM include R from preregistartion code
+
+We will model the data with a structural equation model. The exact model, R code to run it and example analysis with simulated data can be found in Appendix 1. 
 
 
 ## Transformations
@@ -383,7 +385,8 @@ SEM include R from preregistartion code
 
 Example: The "Effect of sugar on brownie tastiness" does not require any additional transformations. However, if it were using a regression analysis and each level of sweet had been categorically described (e.g. not sweet, somewhat sweet, sweet, and very sweet), 'sweet' could be dummy coded with 'not sweet' as the reference category. -->
 
-as numeric
+Number of life time donations (bd02) and number of donations in last years (bd03) and likert scale measured variables (po01-3, si01-03, it01-03, ac01-04, iv01-03) will be treated as numeric. Last donation date (bd04) will transformed "bd04 / 10^-(2 - str_length(as.numeric(max(bd04))))". 
+
 
 
 ## Inference criteria
@@ -403,7 +406,9 @@ c. Latent factor model with robust estimator
 
 d. Latent factor model with boostrapping
 
-Among 
+In supplement we will report results from all models, but as the main results we will report the model with highest Comparative Fit Index (CFI). 95 % confidence or credible intervals will be used to decide if an effect is considered significant or not.
+
+Further details of the models can be found in Appendix 1.
 
 
 
@@ -412,7 +417,7 @@ Among
 
 Example: No checks will be performed to determine eligibility for inclusion besides verification that each subject answered each of the three tastiness indices. Outliers will be included in the analysis. -->
 
-All donors answering to question de01 other than "man" or "women" will be excluded as donation policies depend on sex. All donors answering to question bd01 "no" will be excluded as we are interested in person eligible to donate.
+All donors answering to question de01 other than "man" or "women" will be excluded as donation policies depend on sex. All donors answering to question bd01 "no" will be excluded as we are interested in persons eligible to donate.
 
 
 ## Missing data
