@@ -1,0 +1,16 @@
+worcs_version: 0.1.17
+creator: arvasmi
+entry_point: manuscript/manuscript.Rmd
+recipe:
+  recipe: rmarkdown::render('manuscript/manuscript.Rmd')
+  terminal: no
+data:
+  data/data_simulated.csv:
+    save_expression: write.csv(x = data, file = filename, row.names = FALSE)
+    load_expression: read.csv(file = filename, stringsAsFactors = TRUE)
+    codebook: codebook_data_simulated.rmd
+    labels: value_labels_data_simulated.yml
+    synthetic: data/synthetic_data_simulated.csv
+checksums:
+  data/data_simulated.csv: 256c426ee17d611b1a8889242cbaa711
+  data/synthetic_data_simulated.csv: 256c426ee17d611b1a8889242cbaa711
