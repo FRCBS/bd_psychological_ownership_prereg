@@ -3,26 +3,26 @@ title             : "The title"
 shorttitle        : "Title"
 
 author: 
-  - name          : "First Author"
+  - name          : "Abigail Edwards"
     affiliation   : "1"
     corresponding : yes    # Define only one corresponding author
     address       : "Postal address"
-    email         : "my@email.com"
+    email         : "abigail.edwards@uq.edu.au"
     role: # Contributorship roles (e.g., CRediT, https://credit.niso.org/)
       - "Conceptualization"
       - "Writing - Original Draft Preparation"
       - "Writing - Review & Editing"
-  - name          : "Ernst-August Doelle"
-    affiliation   : "1,2"
+  - name          : "Mikko Arvas"
+    affiliation   : "2"
     role:
       - "Writing - Review & Editing"
       - "Supervision"
 
 affiliation:
   - id            : "1"
-    institution   : "Wilhelm-Wundt-University"
+    institution   : "The University of Queensland, Australia"
   - id            : "2"
-    institution   : "Konstanz Business School"
+    institution   : "Finnish Red Cross Blood Service, Finland"
 
 authornote: |
   Add complete departmental affiliations for each author here. Each new line herein must be indented, like this line.
@@ -44,8 +44,10 @@ keywords          : "keywords"
 wordcount         : "X"
 
 bibliography      : ["references.bib", "r-references.bib"]
+#create with zotero using "Better Bibtex" https://retorque.re/zotero-better-bibtex/
 
 csl               : vox-sanguinis.csl
+#https://www.zotero.org/styles?q=vox
 
 floatsintext      : no
 linenumbers       : yes
@@ -72,9 +74,9 @@ library("worcs")
 r_refs("r-references.bib")
 ```
 
-This manuscript uses the Workflow for Open Reproducible Code in Science [WORCS version 0.1.1, @vanlissaWORCSWorkflowOpen2021] to ensure reproducibility and transparency. All code <!--and data--> are available at <!--insert repository URL-->.
+This manuscript uses the Workflow for Open Reproducible Code in Science [WORCS version 0.1.1, @lissaWORCSWorkflowOpen2021] to ensure reproducibility and transparency. All code <!--and data--> are available at <!--insert repository URL-->.
 
-This is an example of a non-essential citation [@@vanlissaWORCSWorkflowOpen2021]. If you change the rendering function to `worcs::cite_essential`, it will be removed.
+This is an example of a non-essential citation [@lissaWORCSWorkflowOpen2021]. If you change the rendering function to `worcs::cite_essential`, it will be removed.
 
 In this project we aim to replicate the analysis carried out with Australian blood donors [@edwardsPsychologicalOwnershipIdentity2023] with Finnish blood donors
 
@@ -111,6 +113,8 @@ We used `r cite_r("r-references.bib")` for all our analyses.
 \newpage
 
 # References
+
+<!--https://tex.stackexchange.com/questions/702678/generating-citation-keys-with-zotero-and-better-bibtex-plugin  Zotero library -> right click -> Better BibTex -> Refresh BibTex Key. Do this for each entry. Then export the collection/library as references.bib file to /manuscript folder for use with this file -->
 
 ::: {#refs custom-style="Bibliography"}
 :::

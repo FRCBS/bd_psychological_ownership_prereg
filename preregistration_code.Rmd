@@ -9,20 +9,6 @@ output:
 always_allow_html: true
 ---
 
-TODO:
- 
- -remove superfluous outputs
- 
- -check discussion with Lauri, was there anything else to do?
- 
- -check model saving
- 
- -fill out the preregistration form
- 
- -are Abigail's sum score coefficients bootstrapped?
- 
- -report effects of exclusions
- 
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(
@@ -41,8 +27,8 @@ library(lavaan)
 library(lavaanPlot)
 library(kableExtra)
 #library(semPlot) # update plots to semPlot later
-#library(blavaan) # could not get it to work with this model and synthetic data
-#library(tidySEM) # https://github.com/yrosseel/lavaan/issues/359 lavaan does not work if tidySEM is loaded.
+#library(blavaan) # could not get it to work with this model and synthetic data, try as sensitivity analysis later
+#library(tidySEM) # https://github.com/yrosseel/lavaan/issues/359 lavaan does not work if tidySEM is loaded!
 ```
 
 
@@ -54,15 +40,15 @@ if (exists("data_simulated")) {
   data <- data_simulated
   rm(data_simulated)
 }
-# sometimes it get strange errors about C stack which can be solved with this
+# sometimes I get strange errors about C stack which can be solved with this
 #data <- as.data.frame(data)
 fitmodels <- TRUE
 if (!fitmodels) {
   print("Loading previously fitted models")
   load(file=here(str_replace(str_c("results/",datafile),"\\.data\\.",".models.")))
   fit.po02ss <- models$fit.po02ss
-  fit.po02 <- models$fit.po02
   fit.po03ss <- models$fit.po03ss
+  fit.po02 <- models$fit.po02
   fit.po03 <- models$fit.po03
 }
 
@@ -108,11 +94,11 @@ as_kable_extra(table1, format = "latex")
 
 
 
-## Age by Gender
+## Age by sex
 
 ```{r}
 
-p <- ggplot(data)
+p <- ggplot(data %>% filter(de01 == 'man' | de01 == "women"))
 p <- p +  geom_histogram(aes(x=de02),binwidth = 5)
 p <- p + facet_wrap(. ~ de01)
 p <- p + xlab("Age in years")
@@ -186,6 +172,28 @@ gglikert(
 )
 ```
 
+# Exclusions
+
+```{r}
+
+
+data %>%
+  filter(!(de01 == 'man' | de01 == "women"))  %>% nrow()
+cat("are removed because of sex\n")
+
+data %>%
+  filter(bd01 == 'no') %>% nrow()
+cat("are removed because of non-eligibility\n")
+
+
+data %>%
+  #lavaan cannot deal with unordered factor with more then 2 levels
+  filter(de01 == 'man' | de01 == "women") %>% 
+  filter(bd01 != 'no') %>% nrow()
+cat("in total after exclusions.\n")
+  
+```
+
 
 
 # Model
@@ -209,24 +217,18 @@ data.fit <- data %>%
     ) %>% 
       mutate(
         bd04 = as.numeric(bd04), # lavaan cannot handle dates
-        bd04 = bd04 / 10^-(2 - str_length(as.numeric(max(bd04)))) # https://groups.google.com/g/lavaan/c/r7w-4HHg5R0 
+        bd04 = bd04 / 10^-(1 - str_length(as.numeric(max(bd04))))
+        #divide the numeric date which is in 10000s by 10000
+        # https://groups.google.com/g/lavaan/c/r7w-4HHg5R0 
         #"Your underweight variance seems to be much larger than other variances.  Try dividing it by 10 or 100 to make the SDs more similar across modeled variables." 
-        # But this does not seem to necessarily help.
-      )
+        )
   ) %>% 
-  #Original paper used sum scores instead of CFA. Let's add them for comparison
+  #Original paper used sum scores instead of FA. 
   mutate(
     ss_psycown = as.numeric(po01) + as.numeric(po02) + as.numeric(po03),
     ss_selfid = as.numeric(si01) + as.numeric(si02) + as.numeric(si03),
-    ss_intention = as.numeric(it01) + as.numeric(it02) + as.numeric(it03),
-    #donation history is on diffent scales, normalise them before summing.
-    #others should be positively correlated, but bd04 negatively
-    ss_blooddonor = scale(as.numeric(bd02)) 
-    + scale(as.numeric(bd01)) 
-    + scale(bd03)  
-    -scale(bd04) # do we want to include the DATE OF LAST DONATION?
-    
-  )
+    ss_intention = as.numeric(it01) + as.numeric(it02) + as.numeric(it03)
+    )
 
 # To make bootstrapping run there cannot be any unordered factors
 data.fit2 <- data.fit %>% 
@@ -255,14 +257,14 @@ po01.model <- ' po =~ po01 + po02 + po03
                 ac =~ ac01 + ac02 + ac03 + ac04
                 ai =~ ai01 + ai02 + ai03 + ai04 
                 iv =~ iv01 + iv02 + iv03
-                bd =~ bd02 + bd03 + bd04 #bd02 is sure correlate positively
+                bd =~ bd02 + bd03 + bd04 #bd02 is sure to correlate positively
 
 '
                 
 fit.po01.cfa <- cfa(po01.model,  
-                    estimator = "WLSMV", #
+                    estimator = "MLR", #
                     
-                    data = data.fit)
+                    data = data.fit2)
 fit.po01.cfa
 ```
 
@@ -270,6 +272,8 @@ fit.po01.cfa
 ```{r}
 lavaan::summary(fit.po01.cfa,standardized = TRUE) # tidySEM is loaded this fails!
 ```
+
+### CFA metrics
 
 ```{r}
 cfastd <- lavaan::standardizedsolution(fit.po01.cfa)
@@ -280,8 +284,6 @@ cfastd %>%
   arrange(abs(est.std)) %>% 
   # Just the loadings
   filter(op == '=~')
-# with synthetic data bd04 should come up
-# as they are just random as can be seen from the corplot
 ```
 
 
@@ -314,7 +316,8 @@ round(
          )
 ,3)
 
-#cfa should be better than cfa.o in all measures. cfi and chisq should be bigger, rmsea and srmr smaller in model cfa
+#cfa should be better than cfa.o in all measures. 
+#cfi and chisq should be bigger, rmsea and srmr smaller in model cfa
 ```
 
 
@@ -346,22 +349,20 @@ cat(po02ss.model)
 
 ```{r}
 if (fitmodels) {
-fit.po02ss <- sem(po02ss.model,  
-                    estimator = "MLR", # robust diagonally weighted least squares stable and should work with ordered factors
-                                 data = data.fit2,
-                auto.fix.first = FALSE, #  If TRUE, the factor loading of the first indicator is set to 1.0 for every latent variable. 
-                std.lv = TRUE, 
-                  )
-
-models[["fit.po02ss"]] <- fit.po02ss
+  fit.po02ss <- sem(po02ss.model,  
+                    estimator = "MLR", 
+  # robust diagonally weighted least squares stable and should work with ordered factors
+                    data = data.fit2,
+                    auto.fix.first = FALSE, 
+  #  If TRUE, the factor loading of the first indicator is set to 1.0 for every latent variable. 
+                    std.lv = TRUE, 
+  )
+  
+  models[["fit.po02ss"]] <- fit.po02ss
 }
 
 lavaan::summary(fit.po02ss,standardized = TRUE)
 
-```
-
-```{r}
-varTable(fit.po02ss)
 ```
 
 
@@ -370,15 +371,9 @@ lavaan::inspect(fit.po02ss,"r2")
 ```
 
 
-
 ```{r}
-lavaan::standardizedsolution(fit.po02ss) %>% select(-label)
-# Use standardizedSolution to obtain SEs and test statistics for standardized estimates. 
-
-```
-
-```{r}
-lavaan::standardizedsolution(fit.po02ss) %>% select(-label,se,z) %>%  filter(op == '~')
+fit.po02ss.est  <-standardizedSolution(fit.po02ss)
+fit.po02ss.est %>% select(-label,se,z) %>%  filter(op == '~')
 ```
 
 
@@ -396,7 +391,6 @@ fit.po02ss.est %>%
 ```
 
 
-
 ```{r}
 
 labelsforplottingnull <- c(
@@ -406,27 +400,6 @@ labelsforplottingnull <- c(
   "bd02" = "Blood donation history"
 )
 
-lavaanPlot(
-  model=fit.po02ss,  
-  coefs = TRUE,
-  node_options = list(shape = "box", fontname = "Helvetica"), 
-  edge_options = list(color = "grey"), 
-  labels = labelsforplottingnull,
-
-  #In simulated data there should be correlations inside
-  # bloodonor, psycown, selfid
-  # and between
-  # bloodonor, psycown
-  # and nothing else
-  sig = 0.001
-  # if sig is < 0.001 one gets significant correlations
-  # also from simulated data elsewhere suggesting that 0.05 is not enough
-  
-  ) %>% lavaanPlot::embed_plot_pdf(here("figures/plsssem01.pdf"))
-```
-
-```{r}
-# Same with standardised coefficients
 lavaanPlot(
   model = fit.po02ss, 
    labels = labelsforplottingnull,
@@ -438,11 +411,6 @@ lavaanPlot(
   ) %>% lavaanPlot::embed_plot_pdf(here("figures/plsssem02.pdf"))
 ```
 
-
-
-```{r}
-#semPlot::semPaths(fit.po02ss)
-```
 
 ###  b) Sum score model with bootstrapping
 
@@ -470,6 +438,24 @@ lavaan::summary(fit.po03ss,standardized = TRUE)
 ```
 
 
+```{r}
+fit.po03ss.best  <-standardizedSolution(fit.po03ss)
+fit.po03ss.best %>% select(-label,se,z) %>%  filter(op == '~')
+```
+
+
+
+```{r}
+fit.po03ss.best %>% 
+  filter(abs(est.std) < 0.3) %>% 
+  select(-z,-se) %>% 
+  arrange(abs(est.std)) %>% 
+  # Just the loadings
+  filter(op != '~1')
+
+```
+
+
 
 ```{r}
 lavaanPlot(
@@ -486,10 +472,6 @@ lavaanPlot(
 ```
 
 
-```{r}
-fit.po03ss.best <- parameterEstimates(fit.po03ss)
-fit.po03ss.best %>% select(-se,-z) %>% filter(op == "~")
-```
 
 
 
@@ -523,20 +505,17 @@ cat(po02.model)
 ```{r}
 
 if (fitmodels) {
-fit.po02 <- sem(po02.model,  
-                    estimator = "MLR", # robust diagonally weighted least squares stable and should work with ordered factors
-                                 data = data.fit2,
-                auto.fix.first = FALSE,
-                std.lv = TRUE 
-                  )
-models[["fit.po02"]] <- fit.po02
+  fit.po02 <- sem(po02.model,  
+                  estimator = "MLR",
+                  # robust diagonally weighted least squares stable and should work with ordered factors
+                  data = data.fit2,
+                  auto.fix.first = FALSE,
+                  std.lv = TRUE 
+  )
+  models[["fit.po02"]] <- fit.po02
 }
 lavaan::summary(fit.po02,standardized = TRUE)
 
-```
-
-```{r}
-varTable(fit.po02)
 ```
 
 
@@ -546,22 +525,15 @@ lavaan::inspect(fit.po02,"r2")
 ```
 
 
-
 ```{r}
-lavaan::standardizedsolution(fit.po02) %>% select(-label)
-# Use standardizedSolution to obtain SEs and test statistics for standardized estimates. 
-
-```
-
-```{r}
-lavaan::standardizedsolution(fit.po02) %>% select(-label,se,z) %>%  filter(op == '~')
-```
-
-
-
-```{r}
-
 fit.po02.est  <-standardizedSolution(fit.po02)
+fit.po02.est %>% select(-label,se,z) %>%  filter(op == '~')
+```
+
+
+
+```{r}
+
 fit.po02.est %>% 
   filter(abs(est.std) < 0.3) %>% 
   select(-z,-se) %>% 
@@ -583,27 +555,6 @@ labelsforplotting <- c(
 )
 
 lavaanPlot(
-  model=fit.po02,  
-  coefs = TRUE,
-  node_options = list(shape = "box", fontname = "Helvetica"), 
-  edge_options = list(color = "grey"), 
-  labels = labelsforplotting,
-
-  #In simulated data there should be correlations inside
-  # bloodonor, psycown, selfid
-  # and between
-  # bloodonor, psycown
-  # and nothing else
-  sig = 0.001
-  # if sig is < 0.001 one gets significant correlations
-  # also from simulated data elsewhere suggesting that 0.05 is not enough
-  
-  ) %>% lavaanPlot::embed_plot_pdf(here("figures/pllvsem01.pdf"))
-```
-
-```{r}
-# Same with standardised coefficients
-lavaanPlot(
   model = fit.po02, 
    labels = labelsforplotting,
   node_options = list(shape = "box", fontname = "Helvetica"), 
@@ -618,29 +569,40 @@ lavaanPlot(
 
 
 
+
 ### d) Latent factor model with boostrapping
 
 ```{r}
 
 if (fitmodels) {
-#fit
-
-# https://groups.google.com/g/lavaan/c/A6KCjXAZl-Q good example code
-
-fit.po03 <- sem(po02.model,  
-                    estimator = "ML", # bootstrapping does not work with estimators designed for factors
-                    data = data.fit2, # data that is completely numeric
-                bootstrap = nBoots,
-                se = "boot",
-                auto.fix.first = FALSE,
-                std.lv = TRUE 
-                )
-models[['fit.po03']] <- fit.po03
+  #fit
+  
+  # https://groups.google.com/g/lavaan/c/A6KCjXAZl-Q good example code
+  
+  fit.po03 <- sem(po02.model,  
+                  estimator = "ML", 
+                  # bootstrapping does not work with estimators designed for factors
+                  data = data.fit2,
+                  # data that is completely numeric
+                  bootstrap = nBoots,
+                  se = "boot",
+                  auto.fix.first = FALSE,
+                  std.lv = TRUE 
+  )
+  models[['fit.po03']] <- fit.po03
 }
 
 lavaan::summary(fit.po03,standardized = TRUE)
 
 ```
+
+
+```{r}
+fit.po03.best <- parameterEstimates(fit.po03)
+fit.po03.best %>% select(-se,-z) %>% filter(op == "~")
+```
+
+
 
 
 
@@ -658,18 +620,13 @@ lavaanPlot(
 
 ```
 
-```{r}
-fit.po03.best <- parameterEstimates(fit.po03)
-fit.po03.best %>% select(-se,-z) %>% filter(op == "~")
-```
-
-
 ## Compare models
 
 
 ```{r}
 data.forest  <- fit.po03.best %>% 
   mutate(estmet = "Factor analysis\nbootstrapped") %>%  
+  #rename(est=est.std) %>% 
   filter(op == "~" | op == ":=") %>% 
   bind_rows(
     fit.po02.est %>% mutate(estmet = "Factor analysis") %>% 
@@ -682,6 +639,7 @@ data.forest  <- fit.po03.best %>%
   arrange(estmet, term)
 
 data.forest  <- fit.po03ss.best %>% 
+  rename(est=est.std) %>% 
   mutate(estmet = "Sum score\nbootstrapped") %>%  
   filter(op == "~"| op == ":=") %>% 
   bind_rows(
@@ -701,6 +659,7 @@ data.forest  <- fit.po03ss.best %>%
     term =str_replace_all(term,"ind_eff:ind_eff:","ind_eff:"),
     term =str_replace_all(term,"bd02","blooddonor:"),
     term =str_replace_all(term,"blooddonor:","blooddonor"),
+    term =str_replace_all(term,"^:",""),
     estmet = as.factor(estmet),
     hollow_group=factor(if_else(ci.lower<=0 & ci.upper>=0, NA_character_, as.character(estmet)),
                              levels=levels(estmet))
