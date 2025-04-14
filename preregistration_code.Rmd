@@ -702,7 +702,7 @@ According to https://easystats.github.io/effectsize/reference/interpret_gfi.html
 
 "For structural equation models (SEM), Kline (2015) suggests that at a minimum the following indices should be reported: The model chi-square, the RMSEA, the CFI and the SRMR."
 
-chisq, Chi-squared, larger is better
+chisq, Chi-squared, chisq/df ratio smaller is better
 
 cfi Comparative Fit Index, "It should be > .96" , higher is better
 

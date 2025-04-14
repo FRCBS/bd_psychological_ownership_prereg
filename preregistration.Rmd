@@ -177,158 +177,150 @@ All Likert items are scored 1 (strongly disagree) to 7 (strongly agree).
 
 Items:
 <table>
+
 <tr>
-<td></td>
 <td>Psychological ownership</td>
 </tr>
 <tr>
-<td>
-po01 1. I feel a very high degree of personal ownership of donating blood. [Likert]
-</td>
+<td>po01 1. I feel a very high degree of personal ownership of donating blood. [Likert]</td>
 </tr>
-<td>
-po02 2. I feel like donating blood belongs to me. [Likert]
-</td> </tr>
-<tr>
-<td>
-po03 3. I feel like I own donating blood. [Likert]
-</td> </tr>
-<tr> <td></td>
 
-<td>
-Self-identity
-</td> </tr>
-<tr>
-<td>
-si01 1. Donating blood is important to me. [Likert]
-</td> <tr>
-si02 2. I am like the kind of person who donates blood. [Likert]
-</td> </tr>
 <tr> 
-<td>
-si03 3. Donating blood is an important part of who I am. [Likert]
-</td> </tr>
-<tr> <td></td>
+<td>po02 2. I feel like donating blood belongs to me. [Likert] </td> 
+</tr>
 
-<td>
-Intention
-</td></tr>
 <tr>
-<td>
-it01 1. I would like to donate blood in the future. [Likert]
-</td>   </tr>
-<tr>
-<td>
-it02 2. I intend to donate blood in the future. [Likert]
-</td> </tr>
-<tr>
-<td>
-it03 3. I intend to make more than just a one-off blood donation. [Likert]
-</td></tr>
-<tr><td></td>
-<td>
-Intention to donate for emergency
-</td></tr>
-<tr>
-<td>
-ie01 1. I would be willing to donate blood if I received an urgent callout from the Finnish Red Cross Blood Service. [Likert]
-</td></tr>
-<tr><td></td> 
-<td>
-Antecedents of psychological ownership
-</td></tr>
-<tr><td></td> 
+<td>po03 3. I feel like I own donating blood. [Likert]</td> 
+</tr>
 
-<td>
-Control
-</td></tr>
-<tr>
-<td>
-ac01  1. I have influence over the things that affect me while donating blood. [Likert]
-</td></tr>
-<tr>
-<td>
-ac02 2. I control the location and scheduling for donating blood. [Likert]
-</td></tr>
-<tr>
-<td>
-ac03 3. I influence decisions related to my blood donation. [Likert]
-</td></tr>
-<tr>
-<td>
-ac04 4. In general, I have control over donating blood. [Likert]
-</td></tr>
-<tr><td></td>
-<td>
-Intimate knowledge
-</td></tr>
-<tr>
-<td>
-ai01 1. I am intimately familiar with what is going on with regard to donating blood. [Likert]
-</td></tr>
-<tr>
-<td>
-ai02 2. I have a depth of knowledge as it relates to donating blood. [Likert]
-</td></tr>
-<tr>
-<td>
-ai03 3. I have a comprehensive understanding of donating blood. [Likert]
-</td></tr>
-<tr>
-<td>
-ai04 4. I have a broad understanding of donating blood. [Likert]
-</td></tr>
-<tr><td></td>
+<tr> 
+<td>Self-identity</td> 
+</tr>
 
-<td>
-Self-Investment
-</td></tr>
-<td>
-iv01 1.	I have invested a major part of myself into donating blood. [Likert]
-</td></tr>
 <tr>
-<td>
-iv02 2. I have invested a significant amount of my time into donating blood. [Likert]
-</td></tr>
-<tr>
-<td>
-iv03 3. Overall, I invested a lot into donating blood. [Likert]
-</td></tr>
-<tr><td></td>
+<td>si01 1. Donating blood is important to me. [Likert]</td> 
+<tr>si02 2. I am like the kind of person who donates blood. [Likert]</td> 
+</tr>
 
+<tr> 
+<td>si03 3. Donating blood is an important part of who I am. [Likert]</td> 
+</tr>
 
-<td>
-Blood donation history
-</td></tr>
 <tr>
-<td>
-bd01 1. Do you believe that you are currently eligible to donate blood [yes, no, unsure]
-</td></tr>
-<tr>
-<td>
-bd02 2. How many times in total have you donated blood at the Finnish Red Cross Blood Service Finland? [select number]
-</td></tr>
-<tr>
-<td>
-bd03 3. How many times in the last two years have you donated at the Finnish Red Cross Blood Service? [select number]
-</td></tr>
-<tr>
-<td>
-bd04 4. When did you last attend a Finnish Red Cross blood donation centre with the intention of donating blood? [select date]
-</td></tr>
-<tr><td></td>
+<td>Intention</td>
+</tr>
 
-<td>
-Demographics
-</td></tr>
+<tr>
+<td>it01 1. I would like to donate blood in the future. [Likert]</td>   
+</tr>
+
+<tr>
+<td>it02 2. I intend to donate blood in the future. [Likert]</td>
+</tr>
+
+<tr>
+<td>it03 3. I intend to make more than just a one-off blood donation. [Likert]</td>
+</tr>
+
 <tr>
 <td>
-de01 1. What is your gender? [man, woman, non-binary, prefer to not disclose, prefer to self-describe (open response)]
-</td></tr>
+Intention to donate for emergency</td>
+</tr>
+
 <tr>
-<td>
-de02 2. How old are you today? [select number]
-</td></tr>
+<td>ie01 1. I would be willing to donate blood if I received an urgent callout from the Finnish Red Cross Blood Service. [Likert]</td>
+</tr>
+
+<tr>
+<td>Antecedents of psychological ownership</td>
+</tr>
+
+<tr>
+<td>Control</td>
+</tr>
+
+<tr>
+<td>ac01  1. I have influence over the things that affect me while donating blood. [Likert]</td>
+</tr>
+
+<tr>
+<td>ac02 2. I control the location and scheduling for donating blood. [Likert]</td>
+</tr>
+<tr>
+
+<td>ac03 3. I influence decisions related to my blood donation. [Likert]</td>
+</tr>
+
+<tr>
+<td>ac04 4. In general, I have control over donating blood. [Likert]</td>
+</tr>
+<tr>
+<td>Intimate knowledge</td>
+</tr>
+
+<tr>
+<td>ai01 1. I am intimately familiar with what is going on with regard to donating blood. [Likert]</td>
+</tr>
+
+<tr>
+<td>ai02 2. I have a depth of knowledge as it relates to donating blood. [Likert]</td>
+</tr>
+
+<tr>
+<td>ai03 3. I have a comprehensive understanding of donating blood. [Likert]</td>
+</tr>
+
+<tr>
+<td>ai04 4. I have a broad understanding of donating blood. [Likert]</td>
+</tr>
+
+<tr>
+<td>Self-Investment</td>
+</tr>
+
+<tr>
+<td>iv01 1.	I have invested a major part of myself into donating blood. [Likert]</td>
+</tr>
+
+<tr>
+<td>iv02 2. I have invested a significant amount of my time into donating blood. [Likert] </td>
+</tr>
+
+<tr>
+<td>iv03 3. Overall, I invested a lot into donating blood. [Likert]</td>
+</tr>
+
+<tr>
+<td>Blood donation history</td>
+</tr>
+
+<tr>
+<td>bd01 1. Do you believe that you are currently eligible to donate blood [yes, no, unsure]</td>
+</tr>
+
+<tr>
+<td>bd02 2. How many times in total have you donated blood at the Finnish Red Cross Blood Service Finland? [select number]</td>
+</tr>
+
+<tr>
+<td>bd03 3. How many times in the last two years have you donated at the Finnish Red Cross Blood Service? [select number]</td>
+</tr>
+
+<tr>
+<td>bd04 4. When did you last attend a Finnish Red Cross blood donation centre with the intention of donating blood? [select date]</td>
+</tr>
+
+<tr>
+<td>Demographics</td>
+</tr>
+
+<tr>
+<td>de01 1. What is your gender? [man, woman, non-binary, prefer to not disclose, prefer to self-describe (open response)]</td>
+</tr>
+
+<tr>
+<td>de02 2. How old are you today? [select number]</td>
+</tr>
 </table>
 
 
