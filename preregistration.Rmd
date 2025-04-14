@@ -1,7 +1,7 @@
 ---
 title           : "Measuring psychological ownership and identity in a Finnish blood donor context"
 shorttitle      : "Donation ownership"
-date            : "`r Sys.setlocale('LC_TIME', 'C'); format(Sys.time(), '%d\\\\. %B %Y')`"
+date            : "`r Sys.setlocale('LC_TIME', 'C'); format(Sys.time())`"
 
 author: 
   - name        : Abigail Edwards
@@ -27,7 +27,7 @@ affiliation:
 header-includes:
   - \usepackage{pdfpages}
   
-csl             : vox-sanguinis.csl
+csl             : manuscript/vox-sanguinis.csl
 bibliography      : ["manuscript/references.bib", "manuscript/r-references.bib"]
 
 
