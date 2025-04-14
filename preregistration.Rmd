@@ -395,7 +395,8 @@ c. Latent factor model with robust estimator
 
 d. Latent factor model with boostrapping
 
-In supplement we will report results from all models included in preregistered analysis (Appendix 1), but as the main results we will report the model with highest Comparative Fit Index (CFI). Among models with identical CFIs we will choose the model which gives most conservative i.e. lowest estimate of ind_eff =  a1* d21 * b2. 95 % confidence or credible intervals will be used to decide if an effect is considered significant or not.
+Comparative results from these models will presented and their merits discussed.
+95 % confidence or credible intervals will be used to decide if an effect is considered significant or not.
 
 Further details of the models can be found in Appendix 1.
 
