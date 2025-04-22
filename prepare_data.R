@@ -3,6 +3,8 @@
 # use the function open_data(your_data_frame) or closed_data(your_data_frame)
 # to store the data.
 
+
+#To update data for example with new synthetic data just repalce "simulated_data.csv" and source this file.
 library(worcs)
 library(here)
 library(tidyverse)
