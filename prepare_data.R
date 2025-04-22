@@ -4,7 +4,7 @@
 # to store the data.
 
 
-#To update data for example with new synthetic data just repalce "simulated_data.csv" and source this file.
+#To update data for example with new synthetic data just replace "simulated_data.csv" and source this file.
 library(worcs)
 library(here)
 library(tidyverse)
