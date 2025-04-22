@@ -26,9 +26,13 @@ library(ggstats)
 library(lavaan)
 library(lavaanPlot)
 library(kableExtra)
+library(naniar)
 #library(semPlot) # update plots to semPlot later
 #library(blavaan) # could not get it to work with this model and synthetic data, try as sensitivity analysis later
 #library(tidySEM) # https://github.com/yrosseel/lavaan/issues/359 lavaan does not work if tidySEM is loaded!
+
+
+# guide on how to setup worcs to reproduce this analysis https://cjvanlissa.github.io/worcs/articles/reproduce.html
 ```
 
 
@@ -42,14 +46,16 @@ if (exists("data_simulated")) {
 }
 # sometimes I get strange errors about C stack which can be solved with this
 #data <- as.data.frame(data)
-fitmodels <- TRUE
+fitmodels <- FALSE
 if (!fitmodels) {
   print("Loading previously fitted models")
-  load(file=here(str_replace(str_c("results/",datafile),"\\.data\\.",".models.")))
+  load(file=here("prereg_models.rdata"))
   fit.po02ss <- models$fit.po02ss
   fit.po03ss <- models$fit.po03ss
+  fit.po04ss <- models$fit.po04ss
   fit.po02 <- models$fit.po02
   fit.po03 <- models$fit.po03
+  fit.po04 <- models$fit.po04
 }
 
 dir.create(here("figures"))
@@ -80,6 +86,7 @@ table1 <-
       DonationEligibility = bd01,
       DonationCount = bd02,
       DonationCountLast2years = bd03,
+      DaysFromLastDonation = bd04 
     ),
     include = c(
       Age,
@@ -201,11 +208,10 @@ cat("in total after exclusions.\n")
 # Model
 
 
-## Confirmatory factor analysis
+## Format data for modelling
+
 
 ```{r}
-models <- list()
-
 isordered <- data %>%  summarise(across(everything(), ~ is.ordered(.x))) %>%  as.logical() %>% which()
 isfactor <- data %>%  summarise(across(everything(), ~ is.factor(.x))) %>%  as.logical() %>% which()
 
@@ -219,10 +225,6 @@ data.fit <- data %>%
     ) %>% 
       mutate(
         bd04 = as.numeric(bd04), # lavaan cannot handle dates
-        bd04 = bd04 / 10^-(1 - str_length(as.numeric(max(bd04))))
-        #divide the numeric date which is in 10000s by 10000
-        # https://groups.google.com/g/lavaan/c/r7w-4HHg5R0 
-        #"Your underweight variance seems to be much larger than other variances.  Try dividing it by 10 or 100 to make the SDs more similar across modeled variables." 
         )
   ) %>% 
   #Original paper used sum scores instead of FA. 
@@ -243,16 +245,77 @@ mutate(
 
 
 summary(data.fit)
+
 ```
 
 
 ```{r}
-corrplot(cor(data.fit2))
+corrplot(cor(data.fit2,use="pairwise.complete.obs"))
+```
+
+
+## Missing data analysis
+
+Check proportion of missing in all variables
+
+```{r}
+gg_miss_var(
+  data.fit2
+  )
+```
+
+Check major combinations of missingmess.
+
+```{r}
+gg_miss_upset(data.fit2,nsets = 10,nintersects=40)
+```
+
+
+Check is missingness related to data accumulation.
+
+```{r}
+
+gg_miss_case_cumsum(
+  data.fit2 %>% arrange(dttma)
+) 
+
+
+```
+
+
+Check is missingness related to major endpoint of the study i.e. intention to donate blood.
+
+```{r}
+
+gg_miss_fct(
+  x = data.fit %>% select(-dttma,
+                          -de01,
+                          -de02,
+                          -bd02,
+                          -bd04,
+                          -ss_psycown,
+                          -ss_selfid,
+                          ), 
+  fct = ss_intention)
+
+```
+
+Carry out a crude overall test of missingness.
+
+```{r}
+mcar_test(data.fit2 %>% select(-dttma))
+# p < 0.05 -> Reject the null hypothesis-> Data is MAR (Missing at random) or MNAR (Missing not at random), meaning missingness follows a pattern.
+# But this assumes normally distributed data and does not prove that data is MCAR (Missing Completely at Random)
 ```
 
 
 
+
+## Confirmatory factor analysis
+
 ```{r}
+models <- list()
+
 po01.model <- ' po =~ po01 + po02 + po03
                 si =~ si01 + si02 + si03
                 it =~ it01 + it02 + it03
@@ -265,7 +328,7 @@ po01.model <- ' po =~ po01 + po02 + po03
                 
 fit.po01.cfa <- cfa(po01.model,  
                     estimator = "MLR", #
-                    
+                     missing = "listwise",
                     data = data.fit2)
 fit.po01.cfa
 ```
@@ -310,7 +373,7 @@ lavaanPlot(
 
 
 ```{r}
-#Make a model with out prespesified correlation structure
+#Make a model with out prespecified correlation structure
 fit.po01.cfa.o <- cfa(po01.model,data.fit,orthogonal=TRUE)
 round(
   sapply(list(cfa=fit.po01.cfa,cfa.o=fit.po01.cfa.o),
@@ -430,7 +493,8 @@ fit.po03ss <- sem(po02ss.model,
                 bootstrap = nBoots,
                 se = "boot",
                 auto.fix.first = FALSE,
-                std.lv = TRUE
+                std.lv = TRUE,
+                missing = "listwise"
                 )
 models[['fit.po03ss']] <- fit.po03ss
 }
@@ -474,11 +538,66 @@ lavaanPlot(
 ```
 
 
+###  c) Sum score model with missing data imputation
+
+```{r}
+
+if (fitmodels) {
+  fit.po04ss <- sem(
+    po02ss.model,  
+    estimator = "ML", # 
+    data = data.fit2, # data that is completely numeric
+    auto.fix.first = FALSE,
+    std.lv = TRUE,
+    missing = "fiml",
+    fixed.x = F 
+  )
+  models[['fit.po04ss']] <- fit.po04ss
+}
+
+lavaan::summary(fit.po04ss,standardized = TRUE)
+
+```
+
+
+```{r}
+fit.po04ss.est  <-standardizedSolution(fit.po04ss)
+fit.po04ss.est %>% select(-label,se,z) %>%  filter(op == '~')
+```
+
+
+
+```{r}
+fit.po04ss.est %>% 
+  filter(abs(est.std) < 0.3) %>% 
+  select(-z,-se) %>% 
+  arrange(abs(est.std)) %>% 
+  # Just the loadings
+  filter(op != '~1')
+
+```
+
+
+
+```{r}
+lavaanPlot(
+  model = fit.po04ss, 
+   labels = labelsforplottingnull,
+  node_options = list(shape = "box", fontname = "Helvetica"), 
+  edge_options = list(color = "grey"), 
+  coefs = TRUE, 
+  stand = TRUE,
+  sig=0.001
+  ) %>% lavaanPlot::embed_plot_pdf(here("figures/plsssem04.pdf"))
+
+
+```
 
 
 
 
-### c) Latent factor model with robust estimator
+
+### d) Latent factor model with robust estimator
 
 ```{r}
 
@@ -572,7 +691,7 @@ lavaanPlot(
 
 
 
-### d) Latent factor model with boostrapping
+### e) Latent factor model with boostrapping
 
 ```{r}
 
@@ -622,6 +741,68 @@ lavaanPlot(
 
 ```
 
+
+
+###  f) Latent factor model with missing data imputation
+
+```{r}
+
+if (fitmodels) {
+  fit.po04 <- sem(
+    po02.model,  
+    estimator = "ML", # 
+    data = data.fit2, # data that is completely numeric
+    auto.fix.first = FALSE,
+    std.lv = TRUE,
+    missing = "fiml",
+    fixed.x = F 
+  )
+  models[['fit.po04']] <- fit.po04
+}
+
+lavaan::summary(fit.po04,standardized = TRUE)
+
+```
+
+
+```{r}
+fit.po04.est  <-standardizedSolution(fit.po04)
+fit.po04.est %>% select(-label,se,z) %>%  filter(op == '~')
+```
+
+
+
+```{r}
+fit.po04.est %>% 
+  filter(abs(est.std) < 0.3) %>% 
+  select(-z,-se) %>% 
+  arrange(abs(est.std)) %>% 
+  # Just the loadings
+  filter(op != '~1')
+
+```
+
+
+
+```{r}
+lavaanPlot(
+  model = fit.po04, 
+   labels = labelsforplottingnull,
+  node_options = list(shape = "box", fontname = "Helvetica"), 
+  edge_options = list(color = "grey"), 
+  coefs = TRUE, 
+  stand = TRUE,
+  sig=0.001
+  ) %>% lavaanPlot::embed_plot_pdf(here("figures/plsssem04.pdf"))
+
+
+```
+
+
+
+
+
+
 ## Compare models
 
 
@@ -632,6 +813,9 @@ data.forest  <- fit.po03.best %>%
   filter(op == "~" | op == ":=") %>% 
   bind_rows(
     fit.po02.est %>% mutate(estmet = "Factor analysis") %>% 
+      rename(est=est.std) %>% 
+      filter(op == "~"| op == ":="),
+    fit.po04.est %>% mutate(estmet = "Factor analysis\nimputed") %>% 
       rename(est=est.std) %>% 
       filter(op == "~"| op == ":=") 
   ) %>% 
@@ -647,7 +831,11 @@ data.forest  <- fit.po03ss.best %>%
   bind_rows(
     fit.po02ss.est %>% mutate(estmet = "Sum score") %>% 
       rename(est=est.std) %>% 
-      filter(op == "~"| op == ":=") 
+      filter(op == "~"| op == ":=") ,
+    fit.po04ss.est %>% mutate(estmet = "Sum score\nimputed") %>% 
+      rename(est=est.std) %>% 
+      filter(op == "~"| op == ":=")
+    
   ) %>% 
   mutate(
     term = str_c(label,":",lhs,op,rhs)

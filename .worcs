@@ -12,5 +12,5 @@ data:
     labels: value_labels_data_simulated.yml
     synthetic: data/synthetic_data_simulated.csv
 checksums:
-  data/data_simulated.csv: 8557546355197a229a5d7b1614e4526c
-  data/synthetic_data_simulated.csv: 8557546355197a229a5d7b1614e4526c
+  data/data_simulated.csv: 88f1daff783469335b0604e56e868cf3
+  data/synthetic_data_simulated.csv: 88f1daff783469335b0604e56e868cf3
