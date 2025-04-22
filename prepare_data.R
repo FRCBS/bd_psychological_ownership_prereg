@@ -48,9 +48,17 @@ data_simulated <- data_simulated %>%
       qabbr[1:21]),
     ~ f1(.) 
   ) %>% 
-  mutate(bd04 = as.Date(bd04),
-         bd01 = factor(bd01, levels = c("no","unsure","yes"),ordered = TRUE),
-         de01 = factor(de01)
+  mutate(
+      dttma = as.POSIXct(dttma),
+      bd01 = factor(bd01, levels = c("no","unsure","yes"),ordered = TRUE),
+      bd02 = as.numeric(bd02),
+      bd03 = as.numeric(bd03),
+      bd04 = as.Date(bd04),
+      de01 = factor(de01),
+      de02 = as.numeric(de02),
+      #Days between answering and last donation
+      bd04 = as.numeric(as.Date(dttma) - bd04)
+      
   )  
 
 #####################################################################################################################################
