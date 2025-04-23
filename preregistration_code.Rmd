@@ -31,6 +31,8 @@ library(naniar)
 #library(blavaan) # could not get it to work with this model and synthetic data, try as sensitivity analysis later
 #library(tidySEM) # https://github.com/yrosseel/lavaan/issues/359 lavaan does not work if tidySEM is loaded!
 
+# renv::status() to check 
+# renv::snapshot() to add used and install to renv
 
 # guide on how to setup worcs to reproduce this analysis https://cjvanlissa.github.io/worcs/articles/reproduce.html
 ```
@@ -46,7 +48,7 @@ if (exists("data_simulated")) {
 }
 # sometimes I get strange errors about C stack which can be solved with this
 #data <- as.data.frame(data)
-fitmodels <- FALSE
+fitmodels <- FALSE # TRUE for fitting models
 if (!fitmodels) {
   print("Loading previously fitted models")
   load(file=here("prereg_models.rdata"))
@@ -271,7 +273,7 @@ gg_miss_upset(data.fit2,nsets = 10,nintersects=40)
 ```
 
 
-Check is missingness related to data accumulation.
+Check if missingness is related to data accumulation.
 
 ```{r}
 
@@ -283,7 +285,7 @@ gg_miss_case_cumsum(
 ```
 
 
-Check is missingness related to major endpoint of the study i.e. intention to donate blood.
+Check if missingness is related to major endpoint of the study i.e. intention to donate blood.
 
 ```{r}
 
@@ -550,7 +552,7 @@ if (fitmodels) {
     auto.fix.first = FALSE,
     std.lv = TRUE,
     missing = "fiml",
-    fixed.x = F 
+    fixed.x = FALSE 
   )
   models[['fit.po04ss']] <- fit.po04ss
 }
@@ -755,7 +757,7 @@ if (fitmodels) {
     auto.fix.first = FALSE,
     std.lv = TRUE,
     missing = "fiml",
-    fixed.x = F 
+    fixed.x = FALSE 
   )
   models[['fit.po04']] <- fit.po04
 }
@@ -787,7 +789,7 @@ fit.po04.est %>%
 ```{r}
 lavaanPlot(
   model = fit.po04, 
-   labels = labelsforplottingnull,
+   labels = labelsforplotting,
   node_options = list(shape = "box", fontname = "Helvetica"), 
   edge_options = list(color = "grey"), 
   coefs = TRUE, 
@@ -805,40 +807,45 @@ lavaanPlot(
 
 ## Compare models
 
+### Effect sizes
 
 ```{r}
+
 data.forest  <- fit.po03.best %>% 
-  mutate(estmet = "Factor analysis\nbootstrapped") %>%  
+  mutate(estmet = "Bootstrapped"
+         ) %>%  
   #rename(est=est.std) %>% 
   filter(op == "~" | op == ":=") %>% 
   bind_rows(
-    fit.po02.est %>% mutate(estmet = "Factor analysis") %>% 
+    fit.po02.est %>% mutate(estmet = "Robust") %>% 
       rename(est=est.std) %>% 
       filter(op == "~"| op == ":="),
-    fit.po04.est %>% mutate(estmet = "Factor analysis\nimputed") %>% 
+    fit.po04.est %>% mutate(estmet = "Imputed") %>% 
       rename(est=est.std) %>% 
       filter(op == "~"| op == ":=") 
   ) %>% 
   mutate(
-    term = str_c(label,":",lhs,op,rhs)
+    term = str_c(label,":",lhs,op,rhs),
+    linetype = "Latent factor"
     ) %>% 
   arrange(estmet, term)
 
 data.forest  <- fit.po03ss.best %>% 
   rename(est=est.std) %>% 
-  mutate(estmet = "Sum score\nbootstrapped") %>%  
+  mutate(estmet = "Bootstrapped") %>%  
   filter(op == "~"| op == ":=") %>% 
   bind_rows(
-    fit.po02ss.est %>% mutate(estmet = "Sum score") %>% 
+    fit.po02ss.est %>% mutate(estmet = "Robust") %>% 
       rename(est=est.std) %>% 
       filter(op == "~"| op == ":=") ,
-    fit.po04ss.est %>% mutate(estmet = "Sum score\nimputed") %>% 
+    fit.po04ss.est %>% mutate(estmet = "Imputed") %>% 
       rename(est=est.std) %>% 
       filter(op == "~"| op == ":=")
     
   ) %>% 
   mutate(
-    term = str_c(label,":",lhs,op,rhs)
+    term = str_c(label,":",lhs,op,rhs),
+    linetype = "Sum score"
     ) %>% 
   arrange(estmet, term) %>% 
   bind_rows(data.forest) %>% 
@@ -853,36 +860,68 @@ data.forest  <- fit.po03ss.best %>%
     estmet = as.factor(estmet),
     hollow_group=factor(if_else(ci.lower<=0 & ci.upper>=0, NA_character_, as.character(estmet)),
                              levels=levels(estmet))
+  ) %>% 
+  mutate(
+    mtype = str_c(estmet,"-",linetype)
   )
   
 
 
 
-pos <- position_nudge(y=as.numeric(as.factor(data.forest$estmet))/5 -0.5) 
+pos <- position_nudge(y=as.numeric(as.factor(data.forest$mtype))/7 -0.5) 
 
-data.forest %>% 
-  ggplot(aes(est,xmin=ci.lower,xmax=ci.upper,y=term,fill=hollow_group,color=estmet))+
+pf <- data.forest %>% 
+  ggplot(aes(est,xmin=ci.lower,xmax=ci.upper,y=term,fill=hollow_group,color=estmet,linetype = linetype))+
   geom_vline(xintercept=0,color="grey") +
   geom_linerange(position=pos)+
-  geom_point(shape=21,size=3,position=pos)+
+  geom_point(shape=21,size=3,position=pos,alpha=0.7)+
   scale_fill_discrete(na.value=NA, guide ="none") + 
   labs(x="Standardised effect size",y="Relationship") +
-  labs(color="Model") +
+  labs(color="Model type", linetype="Variable type") +
   geom_stripped_rows(color=NA) + theme_classic() 
+
+pf
+```
+
+```{r}
+ggsave(pf,
+       filename = here("figures/forest01.png"),
+       height = 140,
+       width = 180,
+       units = "mm"
+         )
+
+ggsave(pf,
+       filename = here("figures/forest01.pdf"),
+       height = 140,
+       width = 180,
+       units = "mm"
+         )
 
 
 ```
 
 
+## Indices of goodness of fit
+
 
 ```{r}
 
-round(
-  sapply(list(SS=fit.po02ss,SSB=fit.po03ss,FA=fit.po02,FAB=fit.po03 ),
-         function(x) fitmeasures(x,c("chisq","df","cfi","rmsea","srmr"))
+gfi<- round(
+  sapply(
+    list(
+      SS=fit.po02ss,
+      SSB=fit.po03ss,
+      SSI = fit.po04ss,
+      FA=fit.po02,
+      FAB=fit.po03, 
+      FAI=fit.po04
+      ),
+         function(x) fitmeasures(x,c("chisq","df","pvalue","cfi","rmsea","srmr"))
          )
 ,3)
 
+gfi
 ```
 
 According to https://easystats.github.io/effectsize/reference/interpret_gfi.html
@@ -896,8 +935,9 @@ cfi Comparative Fit Index, "It should be > .96" , higher is better
 
 rmsea Root Mean Square Error of Approximation, "should be < .08", smaller is better
 
-srmr Standardized Root Mean Square Residual, "Should be < .08", smaller is better
+srmr Standardized Root Mean Square Residual, "should be < .08", smaller is better
 
+NB. Sum score and latent factor models use different data and are not nested hence they cannot be compared with these metrics.
 
 
 ```{r}
