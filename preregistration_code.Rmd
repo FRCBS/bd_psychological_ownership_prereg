@@ -81,7 +81,7 @@ summary(data)
 
 table1 <-
   tbl_summary(
-    data %>% 
+    data = data %>% 
       rename(
       Gender =  de01,
       Age = de02,
@@ -93,10 +93,13 @@ table1 <-
     include = c(
       Age,
       DonationEligibility,
+      DaysFromLastDonation,
       DonationCount,
       DonationCountLast2years
       ),
-    by =  Gender
+    by =  Gender,
+     statistic = list(all_continuous() ~ "{median} ({p25}, {p75})", all_categorical() ~
+    "{n} ({p}%)")
     
   ) %>%
   add_n()  # add column with total number of non-missing observations
@@ -306,8 +309,10 @@ Carry out a crude overall test of missingness.
 
 ```{r}
 mcar_test(data.fit2 %>% select(-dttma))
-# p < 0.05 -> Reject the null hypothesis-> Data is MAR (Missing at random) or MNAR (Missing not at random), meaning missingness follows a pattern.
-# But this assumes normally distributed data and does not prove that data is MCAR (Missing Completely at Random)
+# p < 0.05 -> Reject the null hypothesis-> Data is MAR (Missing at random) 
+# or MNAR (Missing not at random), meaning missingness follows a pattern.
+# But this assumes normally distributed data and 
+# does not prove that data is MCAR (Missing Completely at Random)
 ```
 
 
@@ -379,12 +384,12 @@ lavaanPlot(
 fit.po01.cfa.o <- cfa(po01.model,data.fit,orthogonal=TRUE)
 round(
   sapply(list(cfa=fit.po01.cfa,cfa.o=fit.po01.cfa.o),
-         function(x) fitmeasures(x,c("npar","chisq","df","cfi","rmsea","srmr"))
+         function(x) fitmeasures(x,c("npar","chisq","df","pvalue","cfi","rmsea","srmr"))
          )
 ,3)
 
 #cfa should be better than cfa.o in all measures. 
-#cfi and chisq should be bigger, rmsea and srmr smaller in model cfa
+#cfi and chisq/df should be bigger, rmsea and srmr smaller in model cfa
 ```
 
 

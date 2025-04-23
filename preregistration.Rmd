@@ -127,7 +127,7 @@ The answer to this question requires a specific set of instructions so that anot
 
 Example: Participants will be recruited through advertisements at local pastry shops. Participants will be paid $10 for agreeing to participate (raised to $30 if our sample size is not reached within 15 days of beginning recruitment). Participants must be at least 18 years old and be able to eat the ingredients of the pastries. -->
 
-An e-mail inviting to fill an online questionnaire will be sent to the randomly selected blood donors. No recompensation will be offered to participants.Participants must be between 18 and 72 years old.
+An e-mail inviting to fill an online questionnaire will be sent to the randomly selected blood donors. No recompensation will be offered to participants. Participants must be between 18 and 72 years old.
 
 
 ## Sample size
@@ -152,7 +152,7 @@ You may specify a stopping rule based on p-values only in the specific case of s
 
 Example: We will post participant sign-up slots by week on the preceding Friday night, with 20 spots posted per week. We will post 20 new slots each week if, on that Friday night, we are below 320 participants. -->
 
-The online questionnaire will be open for 2 weeks i.e. from 5.5.2025 - to 18.5.2025.
+The online questionnaire will be open for 2 weeks i.e. from 5.5.2025 to 18.5.2025.
 
 
 
