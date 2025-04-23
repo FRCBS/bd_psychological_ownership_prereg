@@ -374,7 +374,7 @@ We will model the data with a structural equation model. The exact model, R code
 
 Example: The "Effect of sugar on brownie tastiness" does not require any additional transformations. However, if it were using a regression analysis and each level of sweet had been categorically described (e.g. not sweet, somewhat sweet, sweet, and very sweet), 'sweet' could be dummy coded with 'not sweet' as the reference category. -->
 
-Number of life time donations (bd02) and number of donations in last years (bd03) and likert scale measured variables (po01-3, si01-03, it01-03, ac01-04, iv01-03) will be treated as numeric. Last donation date (bd04) will transformed "bd04 / 10^-(1 - str_length(as.numeric(max(bd04))))". 
+Number of life time donations (bd02) and number of donations in last years (bd03) and likert scale measured variables (po01-3, si01-03, it01-03, ac01-04, iv01-03) will be treated as numeric. Last donation date (bd04) will transformed to days from last donation by subtracting date of questionnaire response from date of last donation.
 
 
 
@@ -391,9 +391,13 @@ a. Sum score model with robust estimator
 
 b. Sum score model with bootstrapping
 
-c. Latent factor model with robust estimator
+c. Sum score model with FIML for missing data
 
-d. Latent factor model with boostrapping
+d. Latent factor model with robust estimator
+
+e. Latent factor model with boostrapping
+
+f. Latent factor model with FIML for missing data
 
 Comparative results from these models will presented and their merits discussed.
 95 % confidence or credible intervals will be used to decide if an effect is considered significant or not.
@@ -415,15 +419,16 @@ All donors answering to question de01 other than "man" or "women" will be exclud
 
 Example: If a subject does not complete any of the three indices of tastiness, that subject will not be included in the analysis. -->
 
-The survey platform only reports completed questionnaires and all questions are obligatory. Hence there will be no missing data.
-
+Missing data will be analysed (see Appendix 1 for details) for possible biases and Little’s MCAR test carried out to assess randomness of missing data. Models using robust maximum likelihood or bootstrapped maximum likelihood estimation will be fitted with "listwise" deletion of missing data and in addition models using maximum likelihood estimator and "full information maximum likelihood" approach to deal with missing data will be fitted. All these results will be reported and discussed, acknowledging that there is no well-accepted method of dealing with data that is not missing at random
 
 ## Exploratory analyses (optional)
 <!-- If you plan to explore your data set to look for unexpected differences or relationships, you may describe those tests here. An exploratory test is any test where a prediction is not made up front, or there are multiple possible tests that you are going to use. A statistically significant finding in an exploratory test is a great way to form a new confirmatory hypothesis, which could be registered at a later time.
 
 Example: We expect that certain demographic traits may be related to taste preferences. Therefore, we will look for relationships between demographic variables (age, gender, income, and marital status) and the primary outcome measures of taste preferences. -->
 
-Qualitative content analysis will be conducted on participants answers to the open-response question (What do you remember about the first time you donated blood?). Bivariate correlations will be calculated to compare donors’ willingness to respond to a call-out to past blood donation behaviour, psychological ownership, self-identity, and intention to donate blood.  
+Qualitative content analysis will be conducted on participants answers to the open-response question (What do you remember about the first time you donated blood?). Bivariate correlations will be calculated to compare donors’ willingness to respond to a call-out to past blood donation behaviour, psychological ownership, self-identity, and intention to donate blood.
+If there is sufficient data we will stratify models by sex.
+Model improvements will be considered if deemed appropriate.
 
 
 # Other
