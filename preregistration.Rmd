@@ -387,17 +387,21 @@ Example: We will use the standard p<.05 criteria for determining if the ANOVA an
 
 We will model the hypothesis through alternative models:
 
-a. Sum score model with robust estimator
+a) Sum score model with robust estimator and listwise deletion
 
-b. Sum score model with bootstrapping
+b) Sum score model with bootstrapping and listwise deletion
 
-c. Sum score model with FIML for missing data
+c) Sum score model with robust estimator and fiml
 
-d. Latent factor model with robust estimator
+d) Sum score model with bootstrapping and fiml
 
-e. Latent factor model with boostrapping
+e) Latent factor model with robust estimator and listwise deletion
 
-f. Latent factor model with FIML for missing data
+f) Latent factor model with boostrapping and listwise deletion
+
+g) Latent factor model with robust estimator and fiml
+
+h) Latent factor model with bootstrapping and fiml
 
 Comparative results from these models will presented and their merits discussed.
 95 % confidence or credible intervals will be used to decide if an effect is considered significant or not.
@@ -419,7 +423,7 @@ All donors answering to question de01 other than "man" or "women" will be exclud
 
 Example: If a subject does not complete any of the three indices of tastiness, that subject will not be included in the analysis. -->
 
-Missing data will be analysed (see Appendix 1 for details) for possible biases and Little’s MCAR test carried out to assess randomness of missing data. Models using robust maximum likelihood or bootstrapped maximum likelihood estimation will be fitted with "listwise" deletion of missing data and in addition models using maximum likelihood estimator and "full information maximum likelihood" approach to deal with missing data will be fitted. All these results will be reported and discussed, acknowledging that there is no well-accepted method of dealing with data that is not missing at random
+Missing data will be analysed for possible biases and Little’s MCAR test carried out to assess randomness of missing data. Models using "full information maximum likelihood" approach or listwise deletion will be fitted to inspect the effect of these modelling choices (see Appendix 1 for details). All these results will be reported and discussed, acknowledging that there is no well-accepted method of dealing with data that is not missing at random
 
 ## Exploratory analyses (optional)
 <!-- If you plan to explore your data set to look for unexpected differences or relationships, you may describe those tests here. An exploratory test is any test where a prediction is not made up front, or there are multiple possible tests that you are going to use. A statistically significant finding in an exploratory test is a great way to form a new confirmatory hypothesis, which could be registered at a later time.

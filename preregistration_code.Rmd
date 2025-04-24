@@ -48,6 +48,7 @@ if (exists("data_simulated")) {
 }
 # sometimes I get strange errors about C stack which can be solved with this
 #data <- as.data.frame(data)
+#fitmodels <- TRUE # TRUE for fitting models
 fitmodels <- FALSE # TRUE for fitting models
 if (!fitmodels) {
   print("Loading previously fitted models")
@@ -55,9 +56,13 @@ if (!fitmodels) {
   fit.po02ss <- models$fit.po02ss
   fit.po03ss <- models$fit.po03ss
   fit.po04ss <- models$fit.po04ss
+  fit.po05ss <- models$fit.po05ss
   fit.po02 <- models$fit.po02
   fit.po03 <- models$fit.po03
   fit.po04 <- models$fit.po04
+  fit.po05 <- models$fit.po05
+} else{
+  models <- list()
 }
 
 dir.create(here("figures"))
@@ -234,9 +239,9 @@ data.fit <- data %>%
   ) %>% 
   #Original paper used sum scores instead of FA. 
   mutate(
-    ss_psycown = as.numeric(po01) + as.numeric(po02) + as.numeric(po03),
-    ss_selfid = as.numeric(si01) + as.numeric(si02) + as.numeric(si03),
-    ss_intention = as.numeric(it01) + as.numeric(it02) + as.numeric(it03)
+    ss_psycown = scale(as.numeric(po01) + as.numeric(po02) + as.numeric(po03)),
+    ss_selfid = scale(as.numeric(si01) + as.numeric(si02) + as.numeric(si03)),
+    ss_intention = scale(as.numeric(it01) + as.numeric(it02) + as.numeric(it03))
     )
 
 # To make bootstrapping run there cannot be any unordered factors
@@ -321,7 +326,6 @@ mcar_test(data.fit2 %>% select(-dttma))
 ## Confirmatory factor analysis
 
 ```{r}
-models <- list()
 
 po01.model <- ' po =~ po01 + po02 + po03
                 si =~ si01 + si02 + si03
@@ -393,9 +397,7 @@ round(
 ```
 
 
-## SEM
-
-### a) Sum score model with robust estimator
+## Sum score SEM
 
 ```{r}
 #https://stats.stackexchange.com/questions/340857/serial-mediation-in-r-how-to-setup-the-model
@@ -419,15 +421,18 @@ cat(po02ss.model)
 ```
 
 
+### a) Sum score model with robust estimator and listwise deletion
+
 ```{r}
 if (fitmodels) {
   fit.po02ss <- sem(po02ss.model,  
                     estimator = "MLR", 
-  # robust diagonally weighted least squares stable and should work with ordered factors
+                    missing = "listwise",
                     data = data.fit2,
                     auto.fix.first = FALSE, 
-  #  If TRUE, the factor loading of the first indicator is set to 1.0 for every latent variable. 
-                    std.lv = TRUE, 
+                    std.lv = TRUE,
+                    fixed.x = TRUE
+                    
   )
   
   models[["fit.po02ss"]] <- fit.po02ss
@@ -484,26 +489,23 @@ lavaanPlot(
 ```
 
 
-###  b) Sum score model with bootstrapping
+###  b) Sum score model with bootstrapping and listwise deletion
 
 ```{r}
 nBoots <- 1000            
 
 if (fitmodels) {
-#fit
-
-# https://groups.google.com/g/lavaan/c/A6KCjXAZl-Q good example code
-
-fit.po03ss <- sem(po02ss.model,  
-                    estimator = "ML", # 
-                    data = data.fit2, # data that is completely numeric
-                bootstrap = nBoots,
-                se = "boot",
-                auto.fix.first = FALSE,
-                std.lv = TRUE,
-                missing = "listwise"
-                )
-models[['fit.po03ss']] <- fit.po03ss
+  fit.po03ss <- sem(po02ss.model,  
+                    estimator = "ML",  
+                    missing = "listwise",
+                    data = data.fit2, 
+                    bootstrap = nBoots,
+                    se = "boot",
+                    auto.fix.first = FALSE,
+                    std.lv = TRUE,
+                    fixed.x = TRUE
+  )
+  models[['fit.po03ss']] <- fit.po03ss
 }
 
 lavaan::summary(fit.po03ss,standardized = TRUE)
@@ -545,15 +547,15 @@ lavaanPlot(
 ```
 
 
-###  c) Sum score model with missing data imputation
+###  c) Sum score model with robust estimator and fiml
 
 ```{r}
 
 if (fitmodels) {
   fit.po04ss <- sem(
     po02ss.model,  
-    estimator = "ML", # 
-    data = data.fit2, # data that is completely numeric
+    estimator = "MLR", 
+    data = data.fit2, 
     auto.fix.first = FALSE,
     std.lv = TRUE,
     missing = "fiml",
@@ -600,11 +602,68 @@ lavaanPlot(
 
 ```
 
+###  d) Sum score model with bootstrapping and fiml
+
+```{r}
+
+if (fitmodels) {
+  fit.po05ss <- sem(
+    po02ss.model,  
+    estimator = "ML", 
+    bootstrap = nBoots,
+    se = "boot",
+    data = data.fit2, 
+    auto.fix.first = FALSE,
+    std.lv = TRUE,
+    missing = "fiml",
+    fixed.x = FALSE 
+  )
+  models[['fit.po05ss']] <- fit.po05ss
+}
+
+lavaan::summary(fit.po05ss,standardized = TRUE)
+
+```
+
+
+```{r}
+fit.po05ss.est  <-standardizedSolution(fit.po05ss)
+fit.po05ss.est %>% select(-label,se,z) %>%  filter(op == '~')
+```
+
+
+
+```{r}
+fit.po05ss.est %>% 
+  filter(abs(est.std) < 0.3) %>% 
+  select(-z,-se) %>% 
+  arrange(abs(est.std)) %>% 
+  # Just the loadings
+  filter(op != '~1')
+
+```
+
+
+
+```{r}
+lavaanPlot(
+  model = fit.po05ss, 
+   labels = labelsforplottingnull,
+  node_options = list(shape = "box", fontname = "Helvetica"), 
+  edge_options = list(color = "grey"), 
+  coefs = TRUE, 
+  stand = TRUE,
+  sig=0.001
+  ) %>% lavaanPlot::embed_plot_pdf(here("figures/plsssem05.pdf"))
+
+
+```
 
 
 
 
-### d) Latent factor model with robust estimator
+
+## Latent factor SEM
 
 ```{r}
 
@@ -630,15 +689,20 @@ cat(po02.model)
 ```
 
 
+### e) Latent factor model with robust estimator and listwise deletion
+
+
+
 ```{r}
 
 if (fitmodels) {
   fit.po02 <- sem(po02.model,  
                   estimator = "MLR",
-                  # robust diagonally weighted least squares stable and should work with ordered factors
+                  missing = "listwise",
                   data = data.fit2,
                   auto.fix.first = FALSE,
-                  std.lv = TRUE 
+                  std.lv = TRUE,
+                  fixed.x = TRUE
   )
   models[["fit.po02"]] <- fit.po02
 }
@@ -690,7 +754,7 @@ lavaanPlot(
   coefs = TRUE, 
   stand = TRUE,
   sig=0.001
-  ) %>% lavaanPlot::embed_plot_pdf(here("figures/pllssem02.pdf"))
+  ) %>% lavaanPlot::embed_plot_pdf(here("figures/pllvsem02.pdf"))
 ```
 
 
@@ -698,24 +762,20 @@ lavaanPlot(
 
 
 
-### e) Latent factor model with boostrapping
+### f) Latent factor model with boostrapping and listwise deletion
 
 ```{r}
 
 if (fitmodels) {
-  #fit
-  
-  # https://groups.google.com/g/lavaan/c/A6KCjXAZl-Q good example code
-  
   fit.po03 <- sem(po02.model,  
                   estimator = "ML", 
-                  # bootstrapping does not work with estimators designed for factors
                   data = data.fit2,
-                  # data that is completely numeric
                   bootstrap = nBoots,
                   se = "boot",
+                  missing = "listwise",
                   auto.fix.first = FALSE,
-                  std.lv = TRUE 
+                  std.lv = TRUE,
+                  fixed.x =TRUE
   )
   models[['fit.po03']] <- fit.po03
 }
@@ -750,15 +810,15 @@ lavaanPlot(
 
 
 
-###  f) Latent factor model with missing data imputation
+###  g) Latent factor model with robust estimator and fiml
 
 ```{r}
 
 if (fitmodels) {
   fit.po04 <- sem(
     po02.model,  
-    estimator = "ML", # 
-    data = data.fit2, # data that is completely numeric
+    estimator = "MLR",  
+    data = data.fit2,
     auto.fix.first = FALSE,
     std.lv = TRUE,
     missing = "fiml",
@@ -800,11 +860,69 @@ lavaanPlot(
   coefs = TRUE, 
   stand = TRUE,
   sig=0.001
-  ) %>% lavaanPlot::embed_plot_pdf(here("figures/plsssem04.pdf"))
+  ) %>% lavaanPlot::embed_plot_pdf(here("figures/pllvsem04.pdf"))
 
 
 ```
 
+
+
+###  h) Latent factor model with bootstrapping and fiml
+
+```{r}
+
+if (fitmodels) {
+  fit.po05 <- sem(
+    po02.model,  
+    estimator = "ML",  
+    data = data.fit2, 
+    bootstrap = nBoots,
+    se = "boot",
+    auto.fix.first = FALSE,
+    std.lv = TRUE,
+    missing = "fiml",
+    fixed.x = FALSE 
+  )
+  models[['fit.po05']] <- fit.po05
+}
+
+lavaan::summary(fit.po05,standardized = TRUE)
+
+```
+
+
+```{r}
+fit.po05.est  <-standardizedSolution(fit.po05)
+fit.po05.est %>% select(-label,se,z) %>%  filter(op == '~')
+```
+
+
+
+```{r}
+fit.po05.est %>% 
+  filter(abs(est.std) < 0.3) %>% 
+  select(-z,-se) %>% 
+  arrange(abs(est.std)) %>% 
+  # Just the loadings
+  filter(op != '~1')
+
+```
+
+
+
+```{r}
+lavaanPlot(
+  model = fit.po05, 
+   labels = labelsforplotting,
+  node_options = list(shape = "box", fontname = "Helvetica"), 
+  edge_options = list(color = "grey"), 
+  coefs = TRUE, 
+  stand = TRUE,
+  sig=0.001
+  ) %>% lavaanPlot::embed_plot_pdf(here("figures/pllvsem05.pdf"))
+
+
+```
 
 
 
@@ -814,20 +932,35 @@ lavaanPlot(
 
 ### Effect sizes
 
-```{r}
+```{r , fig.height=8}
 
 data.forest  <- fit.po03.best %>% 
-  mutate(estmet = "Bootstrapped"
+  mutate(
+    estmet = "Bootstrapped",
+    missing = "Listwise"
          ) %>%  
   #rename(est=est.std) %>% 
   filter(op == "~" | op == ":=") %>% 
   bind_rows(
-    fit.po02.est %>% mutate(estmet = "Robust") %>% 
+    fit.po02.est %>% mutate(
+      estmet = "Robust",
+      missing = "Listwise"
+      ) %>% 
       rename(est=est.std) %>% 
       filter(op == "~"| op == ":="),
-    fit.po04.est %>% mutate(estmet = "Imputed") %>% 
+    fit.po04.est %>% mutate(
+      estmet = "Robust",
+      missing = "FIML"
+      ) %>% 
+      rename(est=est.std) %>% 
+      filter(op == "~"| op == ":="),
+    fit.po05.est %>% mutate(
+      estmet = "Boostrapped",
+      missing = "FIML"
+      ) %>% 
       rename(est=est.std) %>% 
       filter(op == "~"| op == ":=") 
+
   ) %>% 
   mutate(
     term = str_c(label,":",lhs,op,rhs),
@@ -837,15 +970,31 @@ data.forest  <- fit.po03.best %>%
 
 data.forest  <- fit.po03ss.best %>% 
   rename(est=est.std) %>% 
-  mutate(estmet = "Bootstrapped") %>%  
+  mutate(
+    estmet = "Bootstrapped",
+    missing = "Listwise"
+    ) %>%  
   filter(op == "~"| op == ":=") %>% 
   bind_rows(
-    fit.po02ss.est %>% mutate(estmet = "Robust") %>% 
+    fit.po02ss.est %>% mutate(
+      estmet = "Robust",
+      missing = "Listwise"
+      ) %>% 
       rename(est=est.std) %>% 
       filter(op == "~"| op == ":=") ,
-    fit.po04ss.est %>% mutate(estmet = "Imputed") %>% 
+    fit.po04ss.est %>% mutate(
+      estmet = "Robust",
+      missing = "FIML"
+      ) %>% 
       rename(est=est.std) %>% 
-      filter(op == "~"| op == ":=")
+      filter(op == "~"| op == ":="),
+    fit.po05.est %>% mutate(
+      estmet = "Boostrapped",
+      missing = "FIML"
+      ) %>% 
+      rename(est=est.std) %>% 
+      filter(op == "~"| op == ":=") 
+
     
   ) %>% 
   mutate(
@@ -863,20 +1012,18 @@ data.forest  <- fit.po03ss.best %>%
     term =str_replace_all(term,"blooddonor:","blooddonor"),
     term =str_replace_all(term,"^:",""),
     estmet = as.factor(estmet),
-    hollow_group=factor(if_else(ci.lower<=0 & ci.upper>=0, NA_character_, as.character(estmet)),
-                             levels=levels(estmet))
-  ) %>% 
-  mutate(
-    mtype = str_c(estmet,"-",linetype)
-  )
-  
+    mtype = as.factor(str_c(estmet,"-",linetype, "-",missing)),
+    color = as.factor(str_c(estmet," and ",missing)),
+    hollow_group=factor(if_else(ci.lower<=0 & ci.upper>=0, NA_character_, as.character(color)),
+                             levels=levels(color))
+  ) 
 
 
 
-pos <- position_nudge(y=as.numeric(as.factor(data.forest$mtype))/7 -0.5) 
+pos <- position_nudge(y=as.numeric(as.factor(data.forest$mtype))/10 -0.5) 
 
 pf <- data.forest %>% 
-  ggplot(aes(est,xmin=ci.lower,xmax=ci.upper,y=term,fill=hollow_group,color=estmet,linetype = linetype))+
+  ggplot(aes(est,xmin=ci.lower,xmax=ci.upper,y=term,fill=hollow_group,color=color,linetype = linetype))+
   geom_vline(xintercept=0,color="grey") +
   geom_linerange(position=pos)+
   geom_point(shape=21,size=3,position=pos,alpha=0.7)+
@@ -891,14 +1038,14 @@ pf
 ```{r}
 ggsave(pf,
        filename = here("figures/forest01.png"),
-       height = 140,
+       height = 250,
        width = 180,
        units = "mm"
          )
 
 ggsave(pf,
        filename = here("figures/forest01.pdf"),
-       height = 140,
+       height = 250,
        width = 180,
        units = "mm"
          )
@@ -911,21 +1058,26 @@ ggsave(pf,
 
 
 ```{r}
-
-gfi<- round(
-  sapply(
-    list(
-      SS=fit.po02ss,
-      SSB=fit.po03ss,
-      SSI = fit.po04ss,
-      FA=fit.po02,
-      FAB=fit.po03, 
-      FAI=fit.po04
+if (fitmodels) {
+  gfi<- round(
+    sapply(
+      list(
+        SSRL=fit.po02ss,
+        SSBL=fit.po03ss,
+        SSRF = fit.po04ss,
+        SSBL = fit.po05ss,
+        LFRL=fit.po02,
+        LFBL=fit.po03, 
+        LFRF=fit.po04,
+        LFBF=fit.po05
       ),
-         function(x) fitmeasures(x,c("chisq","df","pvalue","cfi","rmsea","srmr"))
-         )
-,3)
-
+      function(x) fitmeasures(x,c("chisq","df","pvalue","cfi","rmsea","srmr"))
+    )
+    ,3)
+  models[['gfi']] <- gfi
+} else {
+  gfi <- models$gfi
+}
 gfi
 ```
 
