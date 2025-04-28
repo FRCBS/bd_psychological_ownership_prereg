@@ -98,7 +98,7 @@ Cross sectional survey study modeled with a structural equation model.
 
 Example: We will use block randomization, where each participant will be randomly assigned to one of the four equally sized, predetermined blocks. The random number list used to create these four blocks will be created using the web applications available at https://random.org. -->
 
-A set of blood donors will be randomly selected from all blood donors in FRCBS register who have donated at least once during the 730 preceding the day the questionnaire e-mail will be sent i.e. 5.5.2025 .
+A set of blood donors will be randomly selected from all blood donors in FRCBS register who have donated at least once during the 730 preceding the day the questionnaire e-mail will be sent in May 2025 .
 
 # Sampling Plan
 <!-- In this section we’ll ask you to describe how you plan to collect samples, as well as the number of samples you plan to collect and your rationale for this decision. Please keep in mind that the data described in this section should be the actual data used for analysis, so if you are using a subset of a larger dataset, please describe the subset that will actually be used in your study. -->
@@ -152,7 +152,7 @@ You may specify a stopping rule based on p-values only in the specific case of s
 
 Example: We will post participant sign-up slots by week on the preceding Friday night, with 20 spots posted per week. We will post 20 new slots each week if, on that Friday night, we are below 320 participants. -->
 
-The online questionnaire will be open for 2 weeks i.e. from 5.5.2025 to 18.5.2025.
+The online questionnaire will be open for 2 weeks.
 
 
 
