@@ -1,7 +1,7 @@
 # "Psychological ownership and identity motives in blood donation" - repetition in Finland
 Preregistration code for repetition of "Psychological ownership and identity motives in blood donation" (https://doi.org/10.1111/vox.13479).
 
-A common language summary of the results will appear in here in by 28.2.2026 .
+***A common language summary of the results will appear in here by 28.2.2026.***
 
 
 ## Access to data
