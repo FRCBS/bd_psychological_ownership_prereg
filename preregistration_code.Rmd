@@ -42,10 +42,14 @@ library(naniar)
 
 ```{r}
 load_data()
-if (exists("data_simulated")) {
-  data <- data_simulated
-  rm(data_simulated)
-}
+# if (exists("data_simulated")) {
+#   data <- data_simulated
+#   rm(data_simulated)
+# }
+```
+
+
+```{r}
 # sometimes I get strange errors about C stack which can be solved with this
 data <- as.data.frame(data)
 #fitmodels <- TRUE # TRUE for fitting models
