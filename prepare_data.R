@@ -12,9 +12,9 @@ data_simulated <- read.csv(here("data/simulated_data.csv"))[,-1]
 
 #####################################################################################################################################
 # Read real data in 
-# file <- here("data/Tulokset - xxxxx.xlsx")
-# data <- read_xlsx(file,n_max = XX)
-# summary(data)
+file <- here("data/bdpsyone.csv")
+data <- read.csv(file)
+ summary(data)
 #####################################################################################################################################
 
 f1 <- function (x){
@@ -60,9 +60,30 @@ data_simulated <- data_simulated %>%
       bd04 = as.numeric(as.Date(dttma) - bd04)
       
   )  
+summary(data_simulated)
 
+data <- data %>% 
+  mutate_at(
+    vars(
+      qabbr[1:21]),
+    ~ f1(.) 
+  ) %>% 
+  mutate(
+    dttma = as.POSIXct(dttma),
+    bd01 = factor(bd01, levels = c("no","unsure","yes"),ordered = TRUE),
+    bd02 = as.numeric(bd02),
+    bd03 = as.numeric(bd03),
+    #bd04 = as.Date(bd04),
+    de01 = factor(de01),
+    de02 = as.numeric(de02)#,
+    #Days between answering and last donation, done already
+    #bd04 = as.numeric(as.Date(dttma) - bd04)
+    
+  )  %>% select(-X,-consent,-open)
+
+summary(data)
 #####################################################################################################################################
-original_name <- here(paste0("data/",deparse(substitute(data_simulated)), ".csv")) # when real data collected this will be changed to it
+original_name <- here(paste0("data/",deparse(substitute(data)), ".csv")) # when real data collected this will be changed to it
 #####################################################################################################################################
 
 # Above is your data cleaning script
@@ -70,7 +91,7 @@ original_name <- here(paste0("data/",deparse(substitute(data_simulated)), ".csv"
 # When you have real data, it will save the real data locally.
 closed_data(
   #####################################################################################################################################
-  data = data_simulated, # when real data collected this will be changed to it
+  data = data, # when real data collected this will be changed to it
   #####################################################################################################################################
   filename = original_name, 
   synthetic = FALSE)
@@ -85,3 +106,5 @@ add_synthetic(
   synthetic_name = synthetic_name,
   original_name = original_name,
 )
+
+
