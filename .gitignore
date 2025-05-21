@@ -14,3 +14,5 @@
 data/data_simulated.csv
 !codebook_data_simulated.csv
 !synthetic_data_simulated.csv
+data/data.csv
+!codebook_data.csv
