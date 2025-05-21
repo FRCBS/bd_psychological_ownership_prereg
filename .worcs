@@ -11,6 +11,12 @@ data:
     codebook: codebook_data_simulated.rmd
     labels: value_labels_data_simulated.yml
     synthetic: data/synthetic_data_simulated.csv
+  data/data.csv:
+    save_expression: write.csv(x = data, file = filename, row.names = FALSE)
+    load_expression: read.csv(file = filename, stringsAsFactors = TRUE)
+    codebook: codebook_data.rmd
+    labels: value_labels_data.yml
 checksums:
   data/data_simulated.csv: 88f1daff783469335b0604e56e868cf3
   data/synthetic_data_simulated.csv: 88f1daff783469335b0604e56e868cf3
+  data/data.csv: a0b0bde75f7b3c7e04875f3bc2b11c44
