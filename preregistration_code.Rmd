@@ -409,6 +409,12 @@ round(
 #cfi and chisq/df should be bigger, rmsea and srmr smaller in model cfa
 ```
 
+```{r}
+knitr::knit_exit()
+#Stop here with real data and review results before modelling.
+```
+
+
 
 ## Sum score SEM
 
