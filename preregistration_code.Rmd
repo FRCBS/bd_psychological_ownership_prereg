@@ -42,6 +42,7 @@ library(naniar)
 
 ```{r}
 load_data()
+
 # if (exists("data_simulated")) {
 #   data <- data_simulated
 #   rm(data_simulated)
