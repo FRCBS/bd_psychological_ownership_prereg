@@ -53,8 +53,8 @@ load_data()
 ```{r}
 # sometimes I get strange errors about C stack which can be solved with this
 data <- as.data.frame(data)
-#fitmodels <- TRUE # TRUE for fitting models
-fitmodels <- FALSE # TRUE for fitting models
+fitmodels <- TRUE # TRUE for fitting models
+#fitmodels <- FALSE # TRUE for fitting models
 if (!fitmodels) {
   print("Loading previously fitted models")
   load(file=here("prereg_models.rdata"))
@@ -83,6 +83,16 @@ summary(data)
 
 # Plot
 
+##data cleaning
+
+```{r}
+
+#afterdata changing negative blood donation history to missing data for bd04 from 3 participants
+data %>% filter(bd04 < 0)
+data <- data %>% 
+  mutate(bd04 = ifelse(bd04 < 0, NA, bd04))
+
+```
 
 
 ## Demographics Table 1
@@ -122,7 +132,7 @@ as_kable_extra(table1, format = "latex")
 
 ```{r}
 
-p <- ggplot(data %>% filter(de01 == 'man' | de01 == "women"))
+p <- ggplot(data %>% filter(de01 == 'man' | de01 == "woman"))
 p <- p +  geom_histogram(aes(x=de02),binwidth = 5)
 p <- p + facet_wrap(. ~ de01)
 p <- p + xlab("Age in years")
@@ -159,6 +169,9 @@ gglikert(
 ## Intention
 
 ```{r}
+
+#how would we seperate out ie01; as it shouldn't sit with it01
+
 gglikert(
   data,
   include = c("it01","it02","it03","ie01")
@@ -200,9 +213,10 @@ gglikert(
 
 ```{r}
 
+#removing non-eligible participants (must be: over 18, have donated blood in past 2 years, believe currently eligible to donate blood)
 
 data %>%
-  filter(!(de01 == 'man' | de01 == "women"))  %>% nrow()
+  filter(!(de01 == 'man' | de01 == "woman"))  %>% nrow()
 cat("are removed because of sex\n")
 
 data %>%
@@ -210,10 +224,22 @@ data %>%
 cat("are removed because of non-eligibility\n")
 
 
+#afterdata adding additional exclusion criteria in line with preregistered exclusion for bd02 & bd03
+
+data %>%
+  filter(bd02 < 1) %>% nrow()
+cat("are removed because of non-donor\n")
+
+data %>%
+  filter(bd03 < 1) %>% nrow()
+cat("are removed because of 2 year donation\n")
+
 data %>%
   #lavaan cannot deal with unordered factor with more then 2 levels
-  filter(de01 == 'man' | de01 == "women") %>% 
-  filter(bd01 != 'no') %>% nrow()
+  filter(de01 == 'man' | de01 == "woman") %>% 
+  filter(bd01 != 'no') %>% 
+  filter (bd02 >= 1) %>%
+  filter (bd03 >= 1)%>% nrow()
 cat("in total after exclusions.\n")
   
 ```
@@ -230,10 +256,17 @@ cat("in total after exclusions.\n")
 isordered <- data %>%  summarise(across(everything(), ~ is.ordered(.x))) %>%  as.logical() %>% which()
 isfactor <- data %>%  summarise(across(everything(), ~ is.factor(.x))) %>%  as.logical() %>% which()
 
+#afterdata adding in additional exclusion criteria for bd02 & bd03
+data <- data %>% 
+  filter(bd02 >= 1)
+
+data <- data %>% 
+  filter(bd03 >= 1)
+
 #lavaan does not understand empty factor levels
 data.fit <- data %>%
   #lavaan cannot deal with unordered factor with more then 2 levels
-  filter(de01 == 'man' | de01 == "women") %>% # EXCLUSION
+  filter(de01 == 'man' | de01 == "woman") %>% # EXCLUSION
   filter(bd01 != 'no') %>% # EXCLUSION
   mutate(
     across(isfactor, ~ fct_drop(.x)
@@ -327,7 +360,24 @@ gg_miss_fct(
 Carry out a crude overall test of missingness.
 
 ```{r}
-mcar_test(data.fit2 %>% select(-dttma))
+
+#afterdata mcar not running, checking if items are too highly correlated
+    #taking out sum scores as these were highly correlated with items that made them (i.e., ss_psyown highly correlated with po01, po02, po03)
+
+data.fit3 <- data.fit2 %>%
+  select(-ss_psycown,
+         -ss_selfid, 
+         -ss_intention)
+
+corrplot(cor(data.fit3,use="pairwise.complete.obs"))
+mcar_test(data.fit3 %>% select(-dttma))
+
+#afterdata curious what mcar looks like without eO1
+#data.fit4 <- data.fit2 %>%
+ # select(-ie01)
+#mcar_test(data.fit4 %>% select(-dttma))
+
+#mcar_test(data.fit2 %>% select(-dttma)) #doesn't run, likely due to high correlations
 # p < 0.05 -> Reject the null hypothesis-> Data is MAR (Missing at random) 
 # or MNAR (Missing not at random), meaning missingness follows a pattern.
 # But this assumes normally distributed data and 
@@ -336,8 +386,21 @@ mcar_test(data.fit2 %>% select(-dttma))
 
 
 
-
 ## Confirmatory factor analysis
+
+```{r}
+#afterdata model comparison won't run because no participants responded with "1" for ai01 ("I am intimately familiar with what is going on with regard to donating blood")
+
+data.fit2 <- data.fit2 %>%
+  mutate(
+    ai01 = as.numeric(as.character(ai01)),  # convert to numeric if factor
+    ai01 = ai01 - 1,                         # subtract 1 so lowest category is now 1
+    #ai01 = factor(ai01, ordered = TRUE)      # convert back to ordered factor
+  )
+table(data.fit$ai01)
+
+```
+
 
 ```{r}
 
@@ -399,7 +462,7 @@ lavaanPlot(
 
 ```{r}
 #Make a model with out prespecified correlation structure
-fit.po01.cfa.o <- cfa(po01.model,data.fit,orthogonal=TRUE)
+fit.po01.cfa.o <- cfa(po01.model,data.fit2,orthogonal=TRUE)
 round(
   sapply(list(cfa=fit.po01.cfa,cfa.o=fit.po01.cfa.o),
          function(x) fitmeasures(x,c("npar","chisq","df","pvalue","cfi","rmsea","srmr"))
