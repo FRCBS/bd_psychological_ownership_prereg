@@ -86,12 +86,19 @@ summary(data)
 ##data cleaning
 
 ```{r}
+data %>% filter(bd04 < 0)
+data %>% filter(bd03 > 12)
+
+data <- data %>% 
+  mutate(
+    bd04 = ifelse(bd04 < 0, NA, bd04)/7,
+    bd03 = ifelse(bd03 > 12, NA, bd03)
+)
+
 
 #afterdata changing negative blood donation history to missing data for bd04 from 3 participants
-data %>% filter(bd04 < 0)
-data <- data %>% 
-  mutate(bd04 = ifelse(bd04 < 0, NA, bd04))
-
+#afterdata changing values over 12 (maximum number of whole blood donations for men within 2 years) for bd03 to missing.
+#afterdata rescaling bd04 to number of weeks since last donation
 ```
 
 
@@ -223,9 +230,6 @@ data %>%
   filter(bd01 == 'no') %>% nrow()
 cat("are removed because of non-eligibility\n")
 
-
-#afterdata adding additional exclusion criteria in line with preregistered exclusion for bd02 & bd03
-
 data %>%
   filter(bd02 < 1) %>% nrow()
 cat("are removed because of non-donor\n")
@@ -241,7 +245,8 @@ data %>%
   filter (bd02 >= 1) %>%
   filter (bd03 >= 1)%>% nrow()
 cat("in total after exclusions.\n")
-  
+
+#afterdata adding additional exclusion criteria in line with preregistered exclusion for bd02 & bd03  
 ```
 
 
@@ -256,7 +261,6 @@ cat("in total after exclusions.\n")
 isordered <- data %>%  summarise(across(everything(), ~ is.ordered(.x))) %>%  as.logical() %>% which()
 isfactor <- data %>%  summarise(across(everything(), ~ is.factor(.x))) %>%  as.logical() %>% which()
 
-#afterdata adding in additional exclusion criteria for bd02 & bd03
 data <- data %>% 
   filter(bd02 >= 1)
 
@@ -303,6 +307,7 @@ mutate(
 
 summary(data.fit)
 
+#afterdata adding in additional exclusion criteria for bd02 & bd03
 ```
 
 
@@ -361,9 +366,6 @@ Carry out a crude overall test of missingness.
 
 ```{r}
 
-#afterdata mcar not running, checking if items are too highly correlated
-    #taking out sum scores as these were highly correlated with items that made them (i.e., ss_psyown highly correlated with po01, po02, po03)
-
 data.fit3 <- data.fit2 %>%
   select(-ss_psycown,
          -ss_selfid, 
@@ -371,6 +373,9 @@ data.fit3 <- data.fit2 %>%
 
 corrplot(cor(data.fit3,use="pairwise.complete.obs"))
 mcar_test(data.fit3 %>% select(-dttma))
+
+#afterdata mcar not running, checking if items are too highly correlated
+    #taking out sum scores as these were highly correlated with items that made them (i.e., ss_psyown highly correlated with po01, po02, po03)
 
 #afterdata curious what mcar looks like without eO1
 #data.fit4 <- data.fit2 %>%
@@ -389,16 +394,17 @@ mcar_test(data.fit3 %>% select(-dttma))
 ## Confirmatory factor analysis
 
 ```{r}
-#afterdata model comparison won't run because no participants responded with "1" for ai01 ("I am intimately familiar with what is going on with regard to donating blood")
 
 data.fit2 <- data.fit2 %>%
   mutate(
     ai01 = as.numeric(as.character(ai01)),  # convert to numeric if factor
-    ai01 = ai01 - 1,                         # subtract 1 so lowest category is now 1
+    #ai01 = ai01 - 1,                         # subtract 1 so lowest category is now 1
     #ai01 = factor(ai01, ordered = TRUE)      # convert back to ordered factor
   )
 table(data.fit$ai01)
 
+#afterdata model comparison won't run because no participants responded with "1" for ai01 ("I am intimately familiar with what is going on with regard to donating blood")
+  #I'm not sure why but if you just specify that ai01 is numeric it runs without needed to merge level 1 and 2. 
 ```
 
 
@@ -474,7 +480,7 @@ round(
 ```
 
 ```{r}
-knitr::knit_exit()
+#knitr::knit_exit()
 #Stop here with real data and review results before modelling.
 ```
 
