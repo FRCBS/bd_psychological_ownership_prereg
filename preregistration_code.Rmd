@@ -267,6 +267,10 @@ data <- data %>%
 data <- data %>% 
   filter(bd03 >= 1)
 
+#standarsing behaviour variables
+data <- data %>%
+mutate(across(c(bd02, bd03, bd04), ~scale(.) %>% as.numeric()))
+
 #lavaan does not understand empty factor levels
 data.fit <- data %>%
   #lavaan cannot deal with unordered factor with more then 2 levels
@@ -308,6 +312,8 @@ mutate(
 summary(data.fit)
 
 #afterdata adding in additional exclusion criteria for bd02 & bd03
+#afterdata adding in standardisation of bd02, bdo3 and bd04 prior to scale creation
+#afterdata creating sum score variable of donations (bd02 + bd03 + bd04) to be used in analysis as per preregistration
 ```
 
 
@@ -357,6 +363,7 @@ gg_miss_fct(
                           -bd04,
                           -ss_psycown,
                           -ss_selfid,
+                          -ss_donation,
                           ), 
   fct = ss_intention)
 
@@ -369,7 +376,8 @@ Carry out a crude overall test of missingness.
 data.fit3 <- data.fit2 %>%
   select(-ss_psycown,
          -ss_selfid, 
-         -ss_intention)
+         -ss_intention,
+         -ss_donation)
 
 corrplot(cor(data.fit3,use="pairwise.complete.obs"))
 mcar_test(data.fit3 %>% select(-dttma))
@@ -387,6 +395,8 @@ mcar_test(data.fit3 %>% select(-dttma))
 # or MNAR (Missing not at random), meaning missingness follows a pattern.
 # But this assumes normally distributed data and 
 # does not prove that data is MCAR (Missing Completely at Random)
+
+#afterdata removing sum score donation variable (ss_donation)
 ```
 
 
@@ -496,16 +506,19 @@ round(
 
 po02ss.model <- ' 
 #mediation
-ss_psycown ~ a1 *  bd02 
-ss_selfid ~ a2 * bd02 + d21 * ss_psycown
+ss_psycown ~ a1 *  ss_donation
+ss_selfid ~ a2 * ss_donation + d21 * ss_psycown
 
 #regression
-ss_intention ~  de01 + de02 + ie01 +  cp * bd02 + b1 * ss_psycown + b2 * ss_selfid
+ss_intention ~  de01 + de02 + ie01 +  cp * ss_donation + b1 * ss_psycown + b2 * ss_selfid
 
 ind_eff := a1* d21 * b2 
 '
 
 cat(po02ss.model)
+
+#afterdata using sum score donation behaviour variable as per preregistered hypothesis
+
 
 ```
 
@@ -563,7 +576,7 @@ labelsforplottingnull <- c(
   "ss_psycown" = "Psychological ownership",
   "ss_selfid"  = "Self-identity",
   "ss_intention" = "Intention",
-  "bd02" = "Blood donation history"
+  "ss_donation" = "Blood donation history"
 )
 
 lavaanPlot(
@@ -1097,7 +1110,7 @@ data.forest  <- fit.po03ss.best %>%
     rhs =str_replace_all(rhs,"ss_",""),
     term =str_replace_all(term,"ss_",""),
     term =str_replace_all(term,"ind_eff:ind_eff:","ind_eff:"),
-    term =str_replace_all(term,"bd02","blooddonor:"),
+    term =str_replace_all(term,"ss_donation","blooddonor:"),
     term =str_replace_all(term,"blooddonor:","blooddonor"),
     term =str_replace_all(term,"^:",""),
     estmet = as.factor(estmet),
