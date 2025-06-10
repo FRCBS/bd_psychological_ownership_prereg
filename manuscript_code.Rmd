@@ -544,43 +544,106 @@ cat(po02ss.model)
 
 ```{r}
 eval=FALSE
+#if (fitmodels) {
+  #fit.po02ss <- sem(po02ss.model,  
+                    #estimator = "MLR", 
+                    #missing = "listwise",
+                    #data = data.fit2,
+                    #auto.fix.first = FALSE, 
+                    #std.lv = TRUE,
+                    #fixed.x = TRUE
+                    
+ # )
+  
+  #models[["fit.po02ss"]] <- fit.po02ss
+#}
+
+#lavaan::summary(fit.po02ss,standardized = TRUE)
+
+```
+
+
+```{r}
+eval=FALSE
+#lavaan::inspect(fit.po02ss,"r2")
+```
+
+
+```{r}
+eval=FALSE
+#fit.po02ss.est  <-standardizedSolution(fit.po02ss)
+#fit.po02ss.est %>% select(-label,se,z) %>%  filter(op == '~')
+```
+
+
+
+```{r}
+eval=FALSE
+#fit.po02ss.est  <-standardizedSolution(fit.po02ss)
+#fit.po02ss.est %>% 
+  #filter(abs(est.std) < 0.3) %>% 
+  #select(-z,-se) %>% 
+  #arrange(abs(est.std)) %>% 
+  # Just the loadings
+  #filter(op != '~1')
+
+```
+
+
+```{r}
+labelsforplottingnull <- c(
+  "ss_psycown" = "Psychological ownership",
+  "ss_selfid"  = "Self-identity",
+  "ss_intention" = "Intention",
+  "ss_donation" = "Blood donation history"
+)
+
+#lavaanPlot(
+  #model = fit.po02ss, 
+   #labels = labelsforplottingnull,
+  #node_options = list(shape = "box", fontname = "Helvetica"), 
+  #edge_options = list(color = "grey"), 
+  #coefs = TRUE, 
+  #stand = TRUE,
+  #sig=0.001
+  #) %>% lavaanPlot::embed_plot_pdf(here("figures/plsssem02.pdf"))
+```
+
+
+###  b) Sum score model with bootstrapping and listwise deletion
+
+```{r}
+
+nBoots <- 1000            
+
 if (fitmodels) {
-  fit.po02ss <- sem(po02ss.model,  
-                    estimator = "MLR", 
+  fit.po03ss <- sem(po02ss.model,  
+                    estimator = "ML",  
                     missing = "listwise",
-                    data = data.fit2,
-                    auto.fix.first = FALSE, 
+                    data = data.fit2, 
+                    bootstrap = nBoots,
+                    se = "boot",
+                    auto.fix.first = FALSE,
                     std.lv = TRUE,
                     fixed.x = TRUE
-                    
   )
-  
-  models[["fit.po02ss"]] <- fit.po02ss
+  models[['fit.po03ss']] <- fit.po03ss
 }
 
-lavaan::summary(fit.po02ss,standardized = TRUE)
+lavaan::summary(fit.po03ss,standardized = TRUE)
 
 ```
 
 
 ```{r}
-eval=FALSE
-lavaan::inspect(fit.po02ss,"r2")
-```
-
-
-```{r}
-eval=FALSE
-fit.po02ss.est  <-standardizedSolution(fit.po02ss)
-fit.po02ss.est %>% select(-label,se,z) %>%  filter(op == '~')
+fit.po03ss.best  <-standardizedSolution(fit.po03ss)
+fit.po03ss.best %>% select(-label,se,z) %>%  filter(op == '~')
 ```
 
 
 
 ```{r}
-eval=FALSE
-fit.po02ss.est  <-standardizedSolution(fit.po02ss)
-fit.po02ss.est %>% 
+fit.po03ss.best %>% 
   filter(abs(est.std) < 0.3) %>% 
   select(-z,-se) %>% 
   arrange(abs(est.std)) %>% 
@@ -590,63 +653,55 @@ fit.po02ss.est %>%
 ```
 
 
-```{r}
-eval=FALSE
-labelsforplottingnull <- c(
-  "ss_psycown" = "Psychological ownership",
-  "ss_selfid"  = "Self-identity",
-  "ss_intention" = "Intention",
-  "ss_donation" = "Blood donation history"
-)
 
+```{r}
 lavaanPlot(
-  model = fit.po02ss, 
+  model = fit.po03ss, 
    labels = labelsforplottingnull,
   node_options = list(shape = "box", fontname = "Helvetica"), 
   edge_options = list(color = "grey"), 
   coefs = TRUE, 
   stand = TRUE,
   sig=0.001
-  ) %>% lavaanPlot::embed_plot_pdf(here("figures/plsssem02.pdf"))
+  ) %>% lavaanPlot::embed_plot_pdf(here("figures/plsssem03.pdf"))
+
+
 ```
 
 
-###  b) Sum score model with bootstrapping and listwise deletion
+###  c) Sum score model with robust estimator and fiml
 
 ```{r}
 eval=FALSE
-#nBoots <- 1000            
-
 #if (fitmodels) {
-  #fit.po03ss <- sem(po02ss.model,  
-                    #estimator = "ML",  
-                    #missing = "listwise",
-                    #data = data.fit2, 
-                    #bootstrap = nBoots,
-                    #se = "boot",
-                    #auto.fix.first = FALSE,
-                    #std.lv = TRUE,
-                    #fixed.x = TRUE
+  #fit.po04ss <- sem(
+    #po02ss.model,  
+    #estimator = "MLR", 
+    #data = data.fit2, 
+    #auto.fix.first = FALSE,
+    #std.lv = TRUE,
+    #missing = "fiml",
+    #fixed.x = FALSE 
   #)
-  #models[['fit.po03ss']] <- fit.po03ss
+  #models[['fit.po04ss']] <- fit.po04ss
 #}
 
-#lavaan::summary(fit.po03ss,standardized = TRUE)
+#lavaan::summary(fit.po04ss,standardized = TRUE)
 
 ```
 
 
 ```{r}
-#eval=FALSE
-#fit.po03ss.best  <-standardizedSolution(fit.po03ss)
-#fit.po03ss.best %>% select(-label,se,z) %>%  filter(op == '~')
+eval=FALSE
+#fit.po04ss.est  <-standardizedSolution(fit.po04ss)
+#fit.po04ss.est %>% select(-label,se,z) %>%  filter(op == '~')
 ```
 
 
 
 ```{r}
 eval=FALSE
-#fit.po03ss.best %>% 
+#fit.po04ss.est %>% 
   #filter(abs(est.std) < 0.3) %>% 
   #select(-z,-se) %>% 
   #arrange(abs(est.std)) %>% 
@@ -660,73 +715,14 @@ eval=FALSE
 ```{r}
 eval=FALSE
 #lavaanPlot(
-  #model = fit.po03ss, 
+  #model = fit.po04ss, 
    #labels = labelsforplottingnull,
   #node_options = list(shape = "box", fontname = "Helvetica"), 
   #edge_options = list(color = "grey"), 
   #coefs = TRUE, 
   #stand = TRUE,
   #sig=0.001
-  #) %>% lavaanPlot::embed_plot_pdf(here("figures/plsssem03.pdf"))
-
-
-```
-
-
-###  c) Sum score model with robust estimator and fiml
-
-```{r}
-eval=FALSE
-if (fitmodels) {
-  fit.po04ss <- sem(
-    po02ss.model,  
-    estimator = "MLR", 
-    data = data.fit2, 
-    auto.fix.first = FALSE,
-    std.lv = TRUE,
-    missing = "fiml",
-    fixed.x = FALSE 
-  )
-  models[['fit.po04ss']] <- fit.po04ss
-}
-
-lavaan::summary(fit.po04ss,standardized = TRUE)
-
-```
-
-
-```{r}
-eval=FALSE
-fit.po04ss.est  <-standardizedSolution(fit.po04ss)
-fit.po04ss.est %>% select(-label,se,z) %>%  filter(op == '~')
-```
-
-
-
-```{r}
-eval=FALSE
-fit.po04ss.est %>% 
-  filter(abs(est.std) < 0.3) %>% 
-  select(-z,-se) %>% 
-  arrange(abs(est.std)) %>% 
-  # Just the loadings
-  filter(op != '~1')
-
-```
-
-
-
-```{r}
-eval=FALSE
-lavaanPlot(
-  model = fit.po04ss, 
-   labels = labelsforplottingnull,
-  node_options = list(shape = "box", fontname = "Helvetica"), 
-  edge_options = list(color = "grey"), 
-  coefs = TRUE, 
-  stand = TRUE,
-  sig=0.001
-  ) %>% lavaanPlot::embed_plot_pdf(here("figures/plsssem04.pdf"))
+  #) %>% lavaanPlot::embed_plot_pdf(here("figures/plsssem04.pdf"))
 
 
 ```
@@ -828,51 +824,52 @@ cat(po02.model)
 
 
 ```{r}
-
-if (fitmodels) {
-  fit.po02 <- sem(po02.model,  
-                  estimator = "MLR",
-                  missing = "listwise",
-                  data = data.fit2,
-                  auto.fix.first = FALSE,
-                  std.lv = TRUE,
-                  fixed.x = TRUE
-  )
-  models[["fit.po02"]] <- fit.po02
-}
-lavaan::summary(fit.po02,standardized = TRUE)
+eval=FALSE
+#if (fitmodels) {
+  #fit.po02 <- sem(po02.model,  
+                  #estimator = "MLR",
+                  #missing = "listwise",
+                  #data = data.fit2,
+                  #auto.fix.first = FALSE,
+                  #std.lv = TRUE,
+                  #fixed.x = TRUE
+  #)
+  #models[["fit.po02"]] <- fit.po02
+#}
+#lavaan::summary(fit.po02,standardized = TRUE)
 
 ```
 
 
 
 ```{r}
-lavaan::inspect(fit.po02,"r2")
+eval=FALSE
+#lavaan::inspect(fit.po02,"r2")
 ```
 
 
 ```{r}
-fit.po02.est  <-standardizedSolution(fit.po02)
-fit.po02.est %>% select(-label,se,z) %>%  filter(op == '~')
+eval=FALSE
+#fit.po02.est  <-standardizedSolution(fit.po02)
+#fit.po02.est %>% select(-label,se,z) %>%  filter(op == '~')
 ```
 
 
 
 ```{r}
-
-fit.po02.est %>% 
-  filter(abs(est.std) < 0.3) %>% 
-  select(-z,-se) %>% 
-  arrange(abs(est.std)) %>% 
+eval=FALSE
+#fit.po02.est %>% 
+  #filter(abs(est.std) < 0.3) %>% 
+  #select(-z,-se) %>% 
+  #arrange(abs(est.std)) %>% 
   # Just the loadings
-  filter(op != '~1')
+  #filter(op != '~1')
 
 ```
 
 
 
 ```{r}
-
 labelsforplotting <- c(
   "psycown" = "Psychological ownership",
   "selfid"  = "Self-identity",
@@ -880,15 +877,15 @@ labelsforplotting <- c(
   "blooddonor" = "Blood donation history"
 )
 
-lavaanPlot(
-  model = fit.po02, 
-   labels = labelsforplotting,
-  node_options = list(shape = "box", fontname = "Helvetica"), 
-  edge_options = list(color = "grey"), 
-  coefs = TRUE, 
-  stand = TRUE,
-  sig=0.001
-  ) %>% lavaanPlot::embed_plot_pdf(here("figures/pllvsem02.pdf"))
+#lavaanPlot(
+  #model = fit.po02, 
+   #labels = labelsforplotting,
+  #node_options = list(shape = "box", fontname = "Helvetica"), 
+  #edge_options = list(color = "grey"), 
+  #coefs = TRUE, 
+  #stand = TRUE,
+  #sig=0.001
+  #) %>% lavaanPlot::embed_plot_pdf(here("figures/pllvsem02.pdf"))
 ```
 
 
@@ -1003,7 +1000,8 @@ lavaanPlot(
 
 ```{r}
 
-factor_scores <- lavPredict(fit.po04, type = "lv")
+#factor_scores <- lavPredict(fit.po04, type = "lv") #taking factor scores from CFA 
+factor_scores <- lavPredict(fit.po01.cfa, type = "lv")
 head(factor_scores)
 summary(factor_scores)
 
@@ -1182,7 +1180,7 @@ lavTestLRT(ea2.free, ea2.fixed)
 
 
 #end of exploratory analysis
-knitr::knit_exit()
+#knitr::knit_exit()
 
 ```
 
@@ -1193,55 +1191,55 @@ knitr::knit_exit()
 
 ```{r}
 
-if (fitmodels) {
-  fit.po05 <- sem(
-    po02.model,  
-    estimator = "ML",  
-    data = data.fit2, 
-    bootstrap = nBoots,
-    se = "boot",
-    auto.fix.first = FALSE,
-    std.lv = TRUE,
-    missing = "fiml",
-    fixed.x = FALSE 
-  )
-  models[['fit.po05']] <- fit.po05
-}
+#if (fitmodels) {
+  #fit.po05 <- sem(
+    #po02.model,  
+    #estimator = "ML",  
+    #data = data.fit2, 
+    #bootstrap = nBoots,
+    #se = "boot",
+    #auto.fix.first = FALSE,
+    #std.lv = TRUE,
+    #missing = "fiml",
+    #fixed.x = FALSE 
+  #)
+  #models[['fit.po05']] <- fit.po05
+#}
 
-lavaan::summary(fit.po05,standardized = TRUE)
+#lavaan::summary(fit.po05,standardized = TRUE)
 
 ```
 
 
 ```{r}
-fit.po05.est  <-standardizedSolution(fit.po05)
-fit.po05.est %>% select(-label,se,z) %>%  filter(op == '~')
+#fit.po05.est  <-standardizedSolution(fit.po05)
+#fit.po05.est %>% select(-label,se,z) %>%  filter(op == '~')
 ```
 
 
 
 ```{r}
-fit.po05.est %>% 
-  filter(abs(est.std) < 0.3) %>% 
-  select(-z,-se) %>% 
-  arrange(abs(est.std)) %>% 
+#fit.po05.est %>% 
+  #filter(abs(est.std) < 0.3) %>% 
+  #select(-z,-se) %>% 
+  #arrange(abs(est.std)) %>% 
   # Just the loadings
-  filter(op != '~1')
+  #filter(op != '~1')
 
 ```
 
 
 
 ```{r}
-lavaanPlot(
-  model = fit.po05, 
-   labels = labelsforplotting,
-  node_options = list(shape = "box", fontname = "Helvetica"), 
-  edge_options = list(color = "grey"), 
-  coefs = TRUE, 
-  stand = TRUE,
-  sig=0.001
-  ) %>% lavaanPlot::embed_plot_pdf(here("figures/pllvsem05.pdf"))
+#lavaanPlot(
+  #model = fit.po05, 
+   #labels = labelsforplotting,
+  #node_options = list(shape = "box", fontname = "Helvetica"), 
+  #edge_options = list(color = "grey"), 
+  #coefs = TRUE, 
+  #stand = TRUE,
+  #sig=0.001
+  #) %>% lavaanPlot::embed_plot_pdf(here("figures/pllvsem05.pdf"))
 
 
 ```
