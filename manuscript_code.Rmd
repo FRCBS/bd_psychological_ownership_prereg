@@ -1,11 +1,13 @@
 ---
-title: "Appendix 2: Manuscript and Exploratory Code"
+title: 'Appendix 2: Manuscript and Exploratory Code'
 author: "Abigail Edwards, Lauri Hietajärvi and Mikko Arvas"
 date: "`r Sys.setlocale('LC_TIME', 'C'); format(Sys.time())`"
 output:
+  html_document:
+    toc: true
+    df_print: paged
   pdf_document:
-    toc: yes
-
+    toc: true
 always_allow_html: true
 ---
 
@@ -86,7 +88,7 @@ summary(data)
 
 ##data cleaning
 
-```{r}
+```{r eval = FALSE}
 data %>% filter(bd04 < 0)
 data %>% filter(bd03 > 12)
 
@@ -105,7 +107,7 @@ data <- data %>%
 
 ## Demographics Table 1
 
-```{r}
+```{r eval = FALSE}
 
 table1 <-
   tbl_summary(
@@ -138,7 +140,7 @@ as_kable_extra(table1, format = "latex")
 
 ## Age by sex
 
-```{r}
+```{r eval=FALSE}
 
 p <- ggplot(data %>% filter(de01 == 'man' | de01 == "woman"))
 p <- p +  geom_histogram(aes(x=de02),binwidth = 5)
@@ -153,7 +155,7 @@ p
 ## Psychological ownership
 
 
-```{r}
+```{r eval=FALSE}
 gglikert(
   data, 
   include =   starts_with("po") 
@@ -166,7 +168,7 @@ gglikert(
 ## Self-identity
 
 
-```{r}
+```{r eval=FALSE}
 gglikert(
   data, 
   include =   starts_with("si") 
@@ -176,7 +178,7 @@ gglikert(
 
 ## Intention
 
-```{r}
+```{r eval=FALSE}
 
 #how would we seperate out ie01; as it shouldn't sit with it01
 
@@ -189,7 +191,7 @@ gglikert(
 
 ## Antecedents of psychological ownership - Control
 
-```{r}
+```{r eval=FALSE}
 gglikert(
   data, 
   include =   starts_with("ac") 
@@ -199,7 +201,7 @@ gglikert(
 ## Antecedents of psychological ownership - Intimate knowledge
 
 
-```{r}
+```{r eval=FALSE}
 gglikert(
   data, 
   include =   starts_with("ai") 
@@ -210,7 +212,7 @@ gglikert(
 ## Antecedents of psychological ownership - Self-Investment
 
 
-```{r}
+```{r eval=FALSE}
 gglikert(
   data, 
   include =   starts_with("iv") 
@@ -331,8 +333,7 @@ corrplot(cor(data.fit2,use="pairwise.complete.obs"))
 
 Check proportion of missing in all variables
 
-```{r}
-eval=FALSE
+```{r eval=FALSE}
 
 gg_miss_var(
   data.fit2
@@ -341,9 +342,7 @@ gg_miss_var(
 
 Check major combinations of missingmess.
 
-```{r}
-
-eval=FALSE
+```{r eval=FALSE}
 
 gg_miss_upset(data.fit2,nsets = 10,nintersects=40)
 ```
@@ -351,9 +350,8 @@ gg_miss_upset(data.fit2,nsets = 10,nintersects=40)
 
 Check if missingness is related to data accumulation.
 
-```{r}
+```{r eval=FALSE}
 
-eval=FALSE
 
 gg_miss_case_cumsum(
   data.fit2 %>% arrange(dttma)
@@ -365,9 +363,7 @@ gg_miss_case_cumsum(
 
 Check if missingness is related to major endpoint of the study i.e. intention to donate blood.
 
-```{r}
-
-eval=FALSE
+```{r eval=FALSE}
 
 gg_miss_fct(
   x = data.fit %>% select(-dttma,
@@ -385,9 +381,7 @@ gg_miss_fct(
 
 Carry out a crude overall test of missingness.
 
-```{r}
-
-eval=FALSE
+```{r eval=FALSE}
 
 data.fit3 <- data.fit2 %>%
   select(-ss_psycown,
@@ -519,7 +513,7 @@ round(
 
 ```{r}
 
-eval=FALSE
+include=FALSE
 
 #https://stats.stackexchange.com/questions/340857/serial-mediation-in-r-how-to-setup-the-model
 
@@ -544,18 +538,17 @@ cat(po02ss.model)
 
 ```
 
-```{r}
+```{r echo = FALSE}
 #Bivariate correlation table for paper
 
 
 ```
 
 
-### a) Sum score model with robust estimator and listwise deletion
+# a) Sum score model with robust estimator and listwise deletion
 
-```{r}
+```{r echo = FALSE}
 
-eval=FALSE
 #if (fitmodels) {
   #fit.po02ss <- sem(po02ss.model,  
                     #estimator = "MLR", 
@@ -575,16 +568,15 @@ eval=FALSE
 ```
 
 
-```{r}
+```{r echo = FALSE}
 
-eval=FALSE
 #lavaan::inspect(fit.po02ss,"r2")
 
 ```
 
 
-```{r}
-eval=FALSE
+```{r echo = FALSE}
+
 #fit.po02ss.est  <-standardizedSolution(fit.po02ss)
 #fit.po02ss.est %>% select(-label,se,z) %>%  filter(op == '~')
 
@@ -592,8 +584,8 @@ eval=FALSE
 
 
 
-```{r}
-eval=FALSE
+```{r echo = FALSE}
+
 #fit.po02ss.est  <-standardizedSolution(fit.po02ss)
 #fit.po02ss.est %>% 
   #filter(abs(est.std) < 0.3) %>% 
@@ -684,10 +676,9 @@ lavaanPlot(
 ```
 
 
-###  c) Sum score model with robust estimator and fiml
+#  c) Sum score model with robust estimator and fiml
 
-```{r}
-eval=FALSE
+```{r echo = FALSE}
 #if (fitmodels) {
   #fit.po04ss <- sem(
     #po02ss.model,  
@@ -706,8 +697,8 @@ eval=FALSE
 ```
 
 
-```{r}
-eval=FALSE
+```{r echo = FALSE}
+
 #fit.po04ss.est  <-standardizedSolution(fit.po04ss)
 #fit.po04ss.est %>% select(-label,se,z) %>%  filter(op == '~')
 
@@ -715,8 +706,8 @@ eval=FALSE
 
 
 
-```{r}
-eval=FALSE
+```{r echo = FALSE}
+
 #fit.po04ss.est %>% 
   #filter(abs(est.std) < 0.3) %>% 
   #select(-z,-se) %>% 
@@ -728,8 +719,8 @@ eval=FALSE
 
 
 
-```{r}
-eval=FALSE
+```{r echo = FALSE}
+
 #lavaanPlot(
   #model = fit.po04ss, 
    #labels = labelsforplottingnull,
@@ -743,10 +734,10 @@ eval=FALSE
 
 ```
 
-###  d) Sum score model with bootstrapping and fiml
+#  d) Sum score model with bootstrapping and fiml
 
-```{r}
-eval=FALSE
+```{r echo = FALSE}
+
 #if (fitmodels) {
   #fit.po05ss <- sem(
     #po02ss.model,  
@@ -767,8 +758,8 @@ eval=FALSE
 ```
 
 
-```{r}
-eval=FALSE
+```{r echo = FALSE}
+
 #fit.po05ss.est  <-standardizedSolution(fit.po05ss)
 #fit.po05ss.est %>% select(-label,se,z) %>%  filter(op == '~')
 
@@ -776,8 +767,8 @@ eval=FALSE
 
 
 
-```{r}
-eval=FALSE
+```{r echo = FALSE}
+
 #fit.po05ss.est %>% 
   #filter(abs(est.std) < 0.3) %>% 
   #select(-z,-se) %>% 
@@ -789,9 +780,8 @@ eval=FALSE
 
 
 
-```{r}
+```{r echo = FALSE}
 
-eval=FALSE
 #lavaanPlot(
   #model = fit.po05ss, 
    #labels = labelsforplottingnull,
@@ -837,12 +827,11 @@ cat(po02.model)
 ```
 
 
-### e) Latent factor model with robust estimator and listwise deletion
+# e) Latent factor model with robust estimator and listwise deletion
 
 
 
-```{r}
-eval=FALSE
+```{r echo = FALSE}
 #if (fitmodels) {
   #fit.po02 <- sem(po02.model,  
                   #estimator = "MLR",
@@ -860,15 +849,15 @@ eval=FALSE
 
 
 
-```{r}
-eval=FALSE
+```{r echo = FALSE}
+
 #lavaan::inspect(fit.po02,"r2")
 
 ```
 
 
-```{r}
-eval=FALSE
+```{r echo = FALSE}
+
 #fit.po02.est  <-standardizedSolution(fit.po02)
 #fit.po02.est %>% select(-label,se,z) %>%  filter(op == '~')
 
@@ -876,8 +865,8 @@ eval=FALSE
 
 
 
-```{r}
-eval=FALSE
+```{r echo = FALSE}
+
 #fit.po02.est %>% 
   #filter(abs(est.std) < 0.3) %>% 
   #select(-z,-se) %>% 
@@ -889,7 +878,7 @@ eval=FALSE
 
 
 
-```{r}
+```{r echo = FALSE}
 labelsforplotting <- c(
   "psycown" = "Psychological ownership",
   "selfid"  = "Self-identity",
@@ -914,9 +903,9 @@ labelsforplotting <- c(
 
 
 
-### f) Latent factor model with boostrapping and listwise deletion
+# f) Latent factor model with boostrapping and listwise deletion
 
-```{r}
+```{r echo = FALSE}
 
 #if (fitmodels) {
   #fit.po03 <- sem(po02.model,  
@@ -937,7 +926,7 @@ labelsforplotting <- c(
 ```
 
 
-```{r}
+```{r echo = FALSE}
 #fit.po03.best <- parameterEstimates(fit.po03)
 #fit.po03.best %>% select(-se,-z) %>% filter(op == "~")
 
@@ -947,7 +936,7 @@ labelsforplotting <- c(
 
 
 
-```{r}
+```{r echo = FALSE}
 #lavaanPlot(
   #model = fit.po03, 
    #labels = labelsforplotting,
@@ -1017,7 +1006,7 @@ lavaanPlot(
 
 ```
 
-#Exploratory Analysis (a1*b1 comparison)
+### Exploratory Analysis (a1*b1 comparison)
 
 ```{r}
 
@@ -1122,7 +1111,7 @@ ggsave(
 ```
 
 
-#exploratory analysis (multigroup analysis to explore impact of gender)
+### exploratory analysis (multigroup analysis to explore impact of gender)
 
 ```{r}
 
@@ -1207,7 +1196,7 @@ lavTestLRT(ea2.free, ea2.fixed)
 
 
 #end of exploratory analysis
-#knitr::knit_exit()
+knitr::knit_exit()
 
 ```
 
@@ -1216,7 +1205,7 @@ lavTestLRT(ea2.free, ea2.fixed)
 
 ###  h) Latent factor model with bootstrapping and fiml
 
-```{r}
+```{r echo = FALSE}
 
 #if (fitmodels) {
   #fit.po05 <- sem(
@@ -1238,8 +1227,8 @@ lavTestLRT(ea2.free, ea2.fixed)
 
 ```
 
-
-```{r}
+ 
+```{r echo = FALSE}
 #fit.po05.est  <-standardizedSolution(fit.po05)
 #fit.po05.est %>% select(-label,se,z) %>%  filter(op == '~')
 
@@ -1247,7 +1236,7 @@ lavTestLRT(ea2.free, ea2.fixed)
 
 
 
-```{r}
+```{r echo = FALSE}
 #fit.po05.est %>% 
   #filter(abs(est.std) < 0.3) %>% 
   #select(-z,-se) %>% 
@@ -1259,7 +1248,7 @@ lavTestLRT(ea2.free, ea2.fixed)
 
 
 
-```{r}
+```{r echo = FALSE}
 #lavaanPlot(
   #model = fit.po05, 
    #labels = labelsforplotting,
