@@ -1043,8 +1043,8 @@ df_scores$de01 <- factor(df_scores$de01, levels = c(1, 2), labels = c("man", "wo
 factor1 <- ggplot(df_scores, aes(x = psycown, y = blooddonor)) +
   geom_point(aes(color = de02), alpha = 0.7, size = 2.5) +
   geom_smooth(aes(linetype = de01), colour = "black", se = FALSE) +
-  labs(title = "Factor scores: ownership x identity",
-       x = "Identity",
+  labs(title = "Factor scores: psycown ~ blooddonor",
+       x = "Ownership",
        y = "Donation history",
        color = "Age",
        linetype = "Gender") +
@@ -1054,7 +1054,7 @@ factor1 <- ggplot(df_scores, aes(x = psycown, y = blooddonor)) +
 factor2 <- ggplot(df_scores, aes(x = selfid, y = blooddonor)) +
   geom_point(aes(color = de02), alpha = 0.7, size = 2.5) +
   geom_smooth(aes(linetype = de01), colour = "black", se = FALSE) +
-  labs(title = "Factor scores: ownership x identity",
+  labs(title = "Factor scores: selfid ~ blooddonor",
        x = "Identity",
        y = "Donation history",
        color = "Age",
@@ -1065,8 +1065,8 @@ factor2 <- ggplot(df_scores, aes(x = selfid, y = blooddonor)) +
 factor3 <- ggplot(df_scores, aes(x = psycown, y = selfid)) +
   geom_point(aes(color = de02), alpha = 0.7, size = 2.5) +
   geom_smooth(aes(linetype = de01), colour = "black", se = FALSE) +
-  labs(title = "Factor scores: ownership x identity",
-       x = "Psychological Ownership",
+  labs(title = "Factor scores: selfid ~ psycown",
+       x = "Ownership",
        y = "Identity",
        color = "Age",
        linetype = "Gender") +
@@ -1077,7 +1077,7 @@ factor4 <- ggplot(df_scores, aes(x = intention, y = blooddonor,
                       color = as.factor(de01))) +
   geom_point(aes(color = de02), alpha = 0.7, size = 2.5) +
   geom_smooth(aes(linetype = de01), colour = "black", se = FALSE) +
-  labs(title = "Factor scores: ownership x identity",
+  labs(title = "Factor scores: intention ~ blooddonor",
        x = "Intention",
        y = "Donation History",
        color = "Age",
@@ -1088,22 +1088,22 @@ factor4 <- ggplot(df_scores, aes(x = intention, y = blooddonor,
 #intention ~ psycown
 factor5 <- ggplot(df_scores, aes(x = psycown, y = intention,
                       color = as.factor(de01))) +
-  geom_point(alpha = 0.7, size = 2.5) +
-  geom_smooth() +
-  labs(title = "Factor Scores: ownership x intention",
-       x = "Psychological Ownership",
+  geom_point(aes(color = de02), alpha = 0.7, size = 2.5) +
+  geom_smooth(aes(linetype = de01), colour = "black", se = FALSE) +
+  labs(title = "Factor Scores: psycown ~ intention",
+       x = "Ownership",
        y = "Intention",
        color = "Age",
        linetype = "Gender") +
   theme_minimal()
 
 #intention ~ selfid
-factor6 <- ggplot(df_scores, aes(x = psycown, y = intention,
+factor6 <- ggplot(df_scores, aes(x = selfid, y = intention,
                       color = as.factor(de01))) +
-  geom_point(alpha = 0.7, size = 2.5) +
-  geom_smooth() +
-  labs(title = "Factor Scores: ownership x intention",
-       x = "Psychological Ownership",
+  geom_point(aes(color = de02), alpha = 0.7, size = 2.5) +
+  geom_smooth(aes(linetype = de01), colour = "black", se = FALSE) +
+  labs(title = "Factor Scores: selfid ~ intention",
+       x = "Identity",
        y = "Intention",
        color = "Age",
        linetype = "Gender") +
@@ -1146,7 +1146,7 @@ blooddonor =~ bd02
 # regressions (separate labels per group)
 psycown ~ c(a1g1, a1g2) * blooddonor
 selfid ~ c(a2g1, a2g2) * blooddonor + c(d21g1, d21g2) * psycown
-intention ~ c(cpg1, cpg2) * blooddonor + c(b1g1, b2g2) * psycown + c(b2g1, b2g2) * selfid
+intention ~ c(cpg1, cpg2) * blooddonor + c(b1g1, b1g2) * psycown + c(b2g1, b2g2) * selfid
 
 #g1 indirect effects
 ind_eff_g1 := a1g1 * d21g1 * b2g1
@@ -1168,25 +1168,26 @@ ea2.free <- sem(
   missing = "fiml",
   fixed.x = FALSE,
   auto.fix.first = FALSE,
-  group.equal = c("loadings","intercepts”)
-)
-
+  group.equal = c('loadings','intercepts')
+  )
+  
+summary(ea2.free)
  
 ea2.fixed <- sem(
-ea2.model,
-data = data.fit2,
-group = "de01",
-estimator = "MLR",
-std.lv = TRUE,
-missing = "fiml",
-fixed.x = FALSE,
-auto.fix.first = FALSE,
-group.equal = c("loadings", ”intercepts”, ”regressions”),
+  ea2.model,
+  data = data.fit2,
+  group = "de01",
+  estimator = "MLR",
+  std.lv = TRUE,
+  missing = "fiml",
+  fixed.x = FALSE,
+  auto.fix.first = FALSE,
+  group.equal = c('loadings', 'intercepts', 'regressions')
 )
 
- 
 
 # this is for model comparison
+
 lavTestLRT(ea2.free, ea2.fixed)
 
 
@@ -1207,46 +1208,6 @@ lavTestLRT(ea2.free, ea2.fixed)
 
 #end of exploratory analysis
 #knitr::knit_exit()
-=======
-  de02 = data.fit2$de02,
-  de01 = data.fit2$de01
-)
-
-
-
-ggplot(df_scores, aes(x = psycown, y = intention,
-                      color = as.factor(de01))) +
-  geom_point(alpha = 0.7, size = 2.5) +
-  labs(title = "Latent Factor Scores by de01 and de02",
-       x = "Psychological Ownership",
-       y = "Donation Intention",
-       color = "gender") +
-  theme_minimal()
-
-
-ggplot(df_scores, aes(x = p, y = intention,
-                      color = as.factor(de01))) +
-  geom_point(alpha = 0.7, size = 2.5) +
-  labs(title = "Latent Factor Scores by de01 and de02",
-       x = "Psychological Ownership",
-       y = "Donation Intention",
-       color = "gender") +
-  theme_minimal()
-
-
-
-ggplot(df_scores, aes(x = psycown, y = intention,
-                      color = as.factor(de02),
-                      shape = as.factor(de01))) +
-  geom_point(alpha = 0.7, size = 2.5) +
-  labs(title = "Latent Factor Scores by de01 and de02",
-       x = "Psychological Ownership",
-       y = "Donation Intention",
-       color = "age",
-       shape = "gender") +
-  theme_minimal()
-
->>>>>>> ee3050c55c3e75c3dd19c1a8d96fa7c2f0d5d570
 
 ```
 
