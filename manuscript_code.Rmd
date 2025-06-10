@@ -27,12 +27,11 @@ library(lavaan)
 library(lavaanPlot)
 library(kableExtra)
 library(naniar)
+
 library(gridExtra)
 #library(semPlot) # update plots to semPlot later
 #library(blavaan) # could not get it to work with this model and synthetic data, try as sensitivity analysis later
 #library(tidySEM) # https://github.com/yrosseel/lavaan/issues/359 lavaan does not work if tidySEM is loaded!
-#library(griExtra) #used for combining multiple plots
-
 # renv::status() to check 
 # renv::snapshot() to add used and install to renv
 
@@ -334,6 +333,7 @@ Check proportion of missing in all variables
 
 ```{r}
 eval=FALSE
+
 gg_miss_var(
   data.fit2
   )
@@ -342,7 +342,9 @@ gg_miss_var(
 Check major combinations of missingmess.
 
 ```{r}
+
 eval=FALSE
+
 gg_miss_upset(data.fit2,nsets = 10,nintersects=40)
 ```
 
@@ -350,7 +352,9 @@ gg_miss_upset(data.fit2,nsets = 10,nintersects=40)
 Check if missingness is related to data accumulation.
 
 ```{r}
+
 eval=FALSE
+
 gg_miss_case_cumsum(
   data.fit2 %>% arrange(dttma)
 ) 
@@ -362,7 +366,9 @@ gg_miss_case_cumsum(
 Check if missingness is related to major endpoint of the study i.e. intention to donate blood.
 
 ```{r}
+
 eval=FALSE
+
 gg_miss_fct(
   x = data.fit %>% select(-dttma,
                           -de01,
@@ -380,7 +386,9 @@ gg_miss_fct(
 Carry out a crude overall test of missingness.
 
 ```{r}
+
 eval=FALSE
+
 data.fit3 <- data.fit2 %>%
   select(-ss_psycown,
          -ss_selfid, 
@@ -427,7 +435,9 @@ table(data.fit$ai01)
 
 
 ```{r}
+
 #making bd02 the only variable in donation history
+
 
 po01.model <- ' po =~ po01 + po02 + po03
                 si =~ si01 + si02 + si03
@@ -508,7 +518,9 @@ round(
 ## Sum score SEM
 
 ```{r}
+
 eval=FALSE
+
 #https://stats.stackexchange.com/questions/340857/serial-mediation-in-r-how-to-setup-the-model
 
 # N.B. you need to check that first item is positively correlated with your latent factor
@@ -531,6 +543,7 @@ cat(po02ss.model)
 
 
 ```
+
 ```{r}
 #Bivariate correlation table for paper
 
@@ -538,11 +551,10 @@ cat(po02ss.model)
 ```
 
 
-
-
 ### a) Sum score model with robust estimator and listwise deletion
 
 ```{r}
+
 eval=FALSE
 #if (fitmodels) {
   #fit.po02ss <- sem(po02ss.model,  
@@ -564,8 +576,10 @@ eval=FALSE
 
 
 ```{r}
+
 eval=FALSE
 #lavaan::inspect(fit.po02ss,"r2")
+
 ```
 
 
@@ -573,6 +587,7 @@ eval=FALSE
 eval=FALSE
 #fit.po02ss.est  <-standardizedSolution(fit.po02ss)
 #fit.po02ss.est %>% select(-label,se,z) %>%  filter(op == '~')
+
 ```
 
 
@@ -591,6 +606,7 @@ eval=FALSE
 
 
 ```{r}
+
 labelsforplottingnull <- c(
   "ss_psycown" = "Psychological ownership",
   "ss_selfid"  = "Self-identity",
@@ -613,7 +629,6 @@ labelsforplottingnull <- c(
 ###  b) Sum score model with bootstrapping and listwise deletion
 
 ```{r}
-
 nBoots <- 1000            
 
 if (fitmodels) {
@@ -695,6 +710,7 @@ eval=FALSE
 eval=FALSE
 #fit.po04ss.est  <-standardizedSolution(fit.po04ss)
 #fit.po04ss.est %>% select(-label,se,z) %>%  filter(op == '~')
+
 ```
 
 
@@ -755,6 +771,7 @@ eval=FALSE
 eval=FALSE
 #fit.po05ss.est  <-standardizedSolution(fit.po05ss)
 #fit.po05ss.est %>% select(-label,se,z) %>%  filter(op == '~')
+
 ```
 
 
@@ -773,6 +790,7 @@ eval=FALSE
 
 
 ```{r}
+
 eval=FALSE
 #lavaanPlot(
   #model = fit.po05ss, 
@@ -783,7 +801,6 @@ eval=FALSE
   #stand = TRUE,
   #sig=0.001
   #) %>% lavaanPlot::embed_plot_pdf(here("figures/plsssem05.pdf"))
-
 
 ```
 
@@ -803,6 +820,7 @@ psycown =~ po01 + po02 + po03
 selfid =~ si01 + si02 + si03
 intention =~ it01 + it02 + it03
 blooddonor =~ bd02 
+
 #bd01 is just used for exclusion of "no"
 
 #mediation
@@ -845,6 +863,7 @@ eval=FALSE
 ```{r}
 eval=FALSE
 #lavaan::inspect(fit.po02,"r2")
+
 ```
 
 
@@ -852,6 +871,7 @@ eval=FALSE
 eval=FALSE
 #fit.po02.est  <-standardizedSolution(fit.po02)
 #fit.po02.est %>% select(-label,se,z) %>%  filter(op == '~')
+
 ```
 
 
@@ -886,6 +906,7 @@ labelsforplotting <- c(
   #stand = TRUE,
   #sig=0.001
   #) %>% lavaanPlot::embed_plot_pdf(here("figures/pllvsem02.pdf"))
+
 ```
 
 
@@ -919,6 +940,7 @@ labelsforplotting <- c(
 ```{r}
 #fit.po03.best <- parameterEstimates(fit.po03)
 #fit.po03.best %>% select(-se,-z) %>% filter(op == "~")
+
 ```
 
 
@@ -935,7 +957,6 @@ labelsforplotting <- c(
   #stand = TRUE,
   #sig=0.001
   #) %>% lavaanPlot::embed_plot_pdf(here("figures/pllvsem03.pdf"))
-
 
 ```
 
@@ -1002,6 +1023,11 @@ lavaanPlot(
 
 #factor_scores <- lavPredict(fit.po04, type = "lv") #taking factor scores from CFA 
 factor_scores <- lavPredict(fit.po01.cfa, type = "lv")
+
+dim(factor_scores)
+dim(data.fit2)
+
+factor_scores <- lavPredict(fit.po04, type = "lv")
 head(factor_scores)
 summary(factor_scores)
 
@@ -1181,6 +1207,46 @@ lavTestLRT(ea2.free, ea2.fixed)
 
 #end of exploratory analysis
 #knitr::knit_exit()
+=======
+  de02 = data.fit2$de02,
+  de01 = data.fit2$de01
+)
+
+
+
+ggplot(df_scores, aes(x = psycown, y = intention,
+                      color = as.factor(de01))) +
+  geom_point(alpha = 0.7, size = 2.5) +
+  labs(title = "Latent Factor Scores by de01 and de02",
+       x = "Psychological Ownership",
+       y = "Donation Intention",
+       color = "gender") +
+  theme_minimal()
+
+
+ggplot(df_scores, aes(x = p, y = intention,
+                      color = as.factor(de01))) +
+  geom_point(alpha = 0.7, size = 2.5) +
+  labs(title = "Latent Factor Scores by de01 and de02",
+       x = "Psychological Ownership",
+       y = "Donation Intention",
+       color = "gender") +
+  theme_minimal()
+
+
+
+ggplot(df_scores, aes(x = psycown, y = intention,
+                      color = as.factor(de02),
+                      shape = as.factor(de01))) +
+  geom_point(alpha = 0.7, size = 2.5) +
+  labs(title = "Latent Factor Scores by de01 and de02",
+       x = "Psychological Ownership",
+       y = "Donation Intention",
+       color = "age",
+       shape = "gender") +
+  theme_minimal()
+
+>>>>>>> ee3050c55c3e75c3dd19c1a8d96fa7c2f0d5d570
 
 ```
 
@@ -1208,12 +1274,14 @@ lavTestLRT(ea2.free, ea2.fixed)
 
 #lavaan::summary(fit.po05,standardized = TRUE)
 
+
 ```
 
 
 ```{r}
 #fit.po05.est  <-standardizedSolution(fit.po05)
 #fit.po05.est %>% select(-label,se,z) %>%  filter(op == '~')
+
 ```
 
 
@@ -1240,7 +1308,6 @@ lavTestLRT(ea2.free, ea2.fixed)
   #stand = TRUE,
   #sig=0.001
   #) %>% lavaanPlot::embed_plot_pdf(here("figures/pllvsem05.pdf"))
-
 
 ```
 
