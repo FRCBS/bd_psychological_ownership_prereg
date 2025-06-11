@@ -3,11 +3,11 @@ title: 'Appendix 2: Manuscript and Exploratory Code'
 author: "Abigail Edwards, Lauri Hietajärvi and Mikko Arvas"
 date: "`r Sys.setlocale('LC_TIME', 'C'); format(Sys.time())`"
 output:
+  pdf_document:
+    toc: true
   html_document:
     toc: true
     df_print: paged
-  pdf_document:
-    toc: true
 always_allow_html: true
 ---
 
@@ -88,7 +88,7 @@ summary(data)
 
 ##data cleaning
 
-```{r eval = FALSE}
+```{r}
 data %>% filter(bd04 < 0)
 data %>% filter(bd03 > 12)
 
@@ -97,6 +97,12 @@ data <- data %>%
     bd04 = ifelse(bd04 < 0, NA, bd04)/7,
     bd03 = ifelse(bd03 > 12, NA, bd03)
 )
+
+data <- data %>% 
+  filter(bd02 >= 1)
+
+data <- data %>% 
+  filter(bd03 >= 1)
 
 
 #afterdata changing negative blood donation history to missing data for bd04 from 3 participants
@@ -107,7 +113,7 @@ data <- data %>%
 
 ## Demographics Table 1
 
-```{r eval = FALSE}
+```{r}
 
 table1 <-
   tbl_summary(
@@ -136,6 +142,43 @@ table1 <-
 as_kable_extra(table1, format = "latex")
 ```
 
+
+
+## exploratory demographics table 
+
+```{r}
+library(gtsummary)
+library(dplyr)
+library(kableExtra)
+
+edata_clean <- data %>%
+  filter(de01 == 'man' | de01 == "woman") %>%
+  rename(
+    Gender = de01,
+    Age = de02,
+    DonationEligibility = bd01,
+    DonationCount = bd02,
+    DonationCountLast2years = bd03,
+    WeeksFromLastDonation = bd04
+  )
+
+# Create summary table
+etable1 <- tbl_summary(
+  data = edata_clean,
+  include = c(Age, DonationEligibility, WeeksFromLastDonation, DonationCount, DonationCountLast2years),
+  by = Gender,
+  statistic = list(
+    all_continuous() ~ "{mean} ({sd})",   # Use mean (SD) for continuous vars
+    all_categorical() ~ "{n} ({p}%)"
+  )
+) %>%
+  add_n()  # Adds total N for each group
+
+# Output as LaTeX
+as_kable_extra(etable1, format = "latex")
+
+
+```
 
 
 ## Age by sex
@@ -251,6 +294,53 @@ cat("in total after exclusions.\n")
 
 #afterdata adding additional exclusion criteria in line with preregistered exclusion for bd02 & bd03  
 ```
+##unstandarsied means for reporting
+
+```{r}
+
+data2 <- data %>%
+mutate(across(c(bd02, bd03, bd04), as.numeric))
+
+#lavaan does not understand empty factor levels
+data.fit.stan <- data2 %>%
+  #lavaan cannot deal with unordered factor with more then 2 levels
+  filter(de01 == 'man' | de01 == "woman") %>% # EXCLUSION
+  filter(bd01 != 'no') %>% # EXCLUSION
+  #Original paper used sum scores instead of FA. 
+  mutate(
+    ss_psycown = 
+      across(starts_with("po"),~as.numeric(.)) %>%  
+      rowMeans(na.rm = TRUE),
+    ss_selfid = 
+      across(starts_with("si"),~as.numeric(.)) %>%  
+      rowMeans(na.rm = TRUE),
+    ss_intention = 
+      across(starts_with("it"),~as.numeric(.)) %>%  
+      rowMeans(na.rm = TRUE),
+    ss_control = 
+      across(starts_with("ac"),~as.numeric(.)) %>%  
+      rowMeans(na.rm = TRUE),
+    ss_knowledge = 
+      across(starts_with("ai"),~as.numeric(.)) %>%  
+      rowMeans(na.rm = TRUE),
+    ss_investment = 
+      across(starts_with("iv"),~as.numeric(.)) %>%  
+      rowMeans(na.rm = TRUE)
+  )
+
+#descriptives
+
+data.fit.stan %>%
+  summarise(across(
+    c(de02, ss_control, ss_knowledge, ss_investment, bd03,
+      ss_psycown, ss_selfid, ss_intention),
+    list(mean = ~mean(., na.rm = TRUE),
+         sd = ~sd(., na.rm = TRUE))
+  ))
+
+
+```
+```
 
 
 
@@ -264,11 +354,6 @@ cat("in total after exclusions.\n")
 isordered <- data %>%  summarise(across(everything(), ~ is.ordered(.x))) %>%  as.logical() %>% which()
 isfactor <- data %>%  summarise(across(everything(), ~ is.factor(.x))) %>%  as.logical() %>% which()
 
-data <- data %>% 
-  filter(bd02 >= 1)
-
-data <- data %>% 
-  filter(bd03 >= 1)
 
 #standarsing behaviour variables
 data <- data %>%
@@ -300,9 +385,9 @@ data.fit <- data %>%
       across(starts_with("it"),~as.numeric(.)) %>%  
       rowMeans(na.rm = TRUE) %>% 
       scale() %>% as.numeric(),
-    #ss_donation as only measuring bd02
+    #ss_donation as only measuring bd03
     ss_donation = 
-      across(all_of(c("bd02")), ~as.numeric(.)) %>%
+      across(all_of(c("bd03")), ~as.numeric(.)) %>%
       rowSums(na.rm = TRUE)
     )
 
@@ -326,7 +411,92 @@ summary(data.fit)
 
 ```{r}
 corrplot(cor(data.fit2,use="pairwise.complete.obs"))
+
 ```
+
+
+## Exploratory analysis: missingness on ei01 variable 
+
+```{r}
+#, labels = c('miss', 'not'), ordered = TRUE
+
+data.fit.miss <- data.fit2 %>%
+  mutate(
+    ss_control = 
+      across(starts_with("ac"),~as.numeric(.)) %>%  
+      rowMeans(na.rm = TRUE) %>% 
+      scale() %>% as.numeric(),
+    ss_knowledge = 
+      across(starts_with("ai"),~as.numeric(.)) %>%  
+      rowMeans(na.rm = TRUE) %>% 
+      scale() %>% as.numeric(),
+    ss_investment = 
+      across(starts_with("iv"),~as.numeric(.)) %>%  
+      rowMeans(na.rm = TRUE) %>% 
+      scale() %>% as.numeric(),
+    )
+
+data.fit.miss$ie01bin <- ifelse(is.na(data.fit2$ie01), 1, 2)
+data.fit.miss$ie01bin <- factor(data.fit.miss$ie01bin, levels = c(1, 2), labels = c("miss", "not"), ordered = TRUE)
+summary(data.fit.miss)
+
+
+data.fit.miss <- data.fit.miss %>% 
+  mutate(
+    ie01bin = as.ordered(ie01bin)
+  ) %>% # and neither any factors at all
+mutate(
+  across(everything(),as.numeric)
+)  # but this also good for plotting correlations
+
+
+data.fit.miss <- data.fit.miss %>%
+  select(
+        #ie01bin,
+         #ac04,
+         de01,
+         de02,
+         #bd02,
+         #bd04,
+         ss_control,
+         ss_knowledge,
+         ss_investment,
+         bd03,
+         ss_psycown,
+         ss_selfid, 
+         ss_intention)
+
+library(psych)
+corrplot(cor(data.fit.miss,use="pairwise.complete.obs"), method ='number')
+
+cor_test <- corr.test(data.fit.miss, use = "pairwise", method = "pearson")
+
+# Combine correlation and p-values into APA-style strings
+apa_matrix <- matrix("", nrow=ncol(data.fit.miss), ncol=ncol(data.fit.miss))
+rownames(apa_matrix) <- colnames(data.fit.miss)
+colnames(apa_matrix) <- colnames(data.fit.miss)
+
+for (i in 1:ncol(data.fit.miss)) {
+  for (j in 1:ncol(data.fit.miss)) {
+    r_val <- round(cor_test$r[i, j], 2)
+    p_val <- cor_test$p[i, j]
+    
+    # Format p-value with APA rules
+    p_str <- ifelse(p_val < .001, "< .001", paste0("= ", round(p_val, 3)))
+    
+    # Combine r and p
+    apa_matrix[i, j] <- paste0(r_val, ", _p_ ", p_str)
+  }
+}
+
+# View table
+apa_matrix
+
+
+
+
+```
+
 
 
 ## Missing data analysis
@@ -430,7 +600,7 @@ table(data.fit$ai01)
 
 ```{r}
 
-#making bd02 the only variable in donation history
+#making bd03 the only variable in donation history
 
 
 po01.model <- ' po =~ po01 + po02 + po03
@@ -439,7 +609,7 @@ po01.model <- ' po =~ po01 + po02 + po03
                 ac =~ ac01 + ac02 + ac03 + ac04
                 ai =~ ai01 + ai02 + ai03 + ai04 
                 iv =~ iv01 + iv02 + iv03
-                bd =~ bd02
+                bd =~ bd03
 
 '
                 
@@ -529,6 +699,8 @@ ss_selfid ~ a2 * ss_donation + d21 * ss_psycown
 ss_intention ~  de01 + de02 + ie01 +  cp * ss_donation + b1 * ss_psycown + b2 * ss_selfid
 
 ind_eff := a1* d21 * b2 
+ind_eff1 := a1*b1
+ind_eff2 := a2*b2
 '
 
 cat(po02ss.model)
@@ -802,14 +974,14 @@ lavaanPlot(
 
 ```{r}
 
-#making bd02 the only variable in donation history
+#making bd03 the only variable in donation history
 
 po02.model <- ' 
 #measurement model
 psycown =~ po01 + po02 + po03
 selfid =~ si01 + si02 + si03
 intention =~ it01 + it02 + it03
-blooddonor =~ bd02 
+blooddonor =~ bd03 
 
 #bd01 is just used for exclusion of "no"
 
@@ -820,6 +992,8 @@ selfid ~ a2 * blooddonor + d21 * psycown
 #regression
 intention ~  de01 + de02 + ie01 +  cp * blooddonor + b1 * psycown + b2 * selfid
 ind_eff := a1* d21 * b2
+ind_eff1 := a1*b1
+ind_eff2 := a2*b2
 '
 
 cat(po02.model)
@@ -1006,7 +1180,8 @@ lavaanPlot(
 
 ```
 
-### Exploratory Analysis (a1*b1 comparison)
+# Exploratory Analysis 
+## Factor Scores: a1*b1 comparisos
 
 ```{r}
 
@@ -1111,7 +1286,7 @@ ggsave(
 ```
 
 
-### exploratory analysis (multigroup analysis to explore impact of gender)
+# Multigroup analysis to explore impact of gender
 
 ```{r}
 
@@ -1123,20 +1298,20 @@ data.fit2 %>%
   group_by(de01) %>%
   summarise(across(everything(), ~ var(.x, na.rm = TRUE)))
 
-#defining new model that doesn't contained de01
+#Lauri email code
 
-ea2.model <- ' 
+ea2.free <- '
 #measurement model
 psycown =~ po01 + po02 + po03
 selfid =~ si01 + si02 + si03
 intention =~ it01 + it02 + it03
-blooddonor =~ bd02
-
+blooddonor =~ bd03
+ 
 # regressions (separate labels per group)
 psycown ~ c(a1g1, a1g2) * blooddonor
 selfid ~ c(a2g1, a2g2) * blooddonor + c(d21g1, d21g2) * psycown
 intention ~ c(cpg1, cpg2) * blooddonor + c(b1g1, b1g2) * psycown + c(b2g1, b2g2) * selfid
-
+ 
 #g1 indirect effects
 ind_eff_g1 := a1g1 * d21g1 * b2g1
 ind_eff1_g1:= a1g1 * b1g1
@@ -1148,8 +1323,8 @@ ind_eff1_g2:= a1g2 * b1g2
 ind_eff2_g2:= a2g2 * b2g2
 '
 
-ea2.free <- sem(
-  ea2.model,
+ea2.free.fit <- sem(
+  ea2.free,
   data = data.fit2,
   group = "de01",
   estimator = "MLR",
@@ -1159,11 +1334,27 @@ ea2.free <- sem(
   auto.fix.first = FALSE,
   group.equal = c('loadings','intercepts')
   )
-  
-summary(ea2.free)
- 
-ea2.fixed <- sem(
-  ea2.model,
+
+ea2.fixed <- '
+#measurement model
+psycown =~ po01 + po02 + po03
+selfid =~ si01 + si02 + si03
+intention =~ it01 + it02 + it03
+blooddonor =~ bd03
+
+# regressions (separate labels per group)
+psycown ~ a1 * blooddonor
+selfid ~ a2 * blooddonor + d21 * psycown
+intention ~ cp * blooddonor + b1 * psycown + b2 * selfid
+
+# indirect effects
+ind_eff := a1 * d21 * b2
+ind_eff1:= a1 * b1
+ind_eff2:= a2 * b2
+'
+
+ea2.fixed.fit <- sem(
+  ea2.fixed,
   data = data.fit2,
   group = "de01",
   estimator = "MLR",
@@ -1171,28 +1362,12 @@ ea2.fixed <- sem(
   missing = "fiml",
   fixed.x = FALSE,
   auto.fix.first = FALSE,
-  group.equal = c('loadings', 'intercepts', 'regressions')
+  group.equal = c('loadings', 'intercepts')
 )
 
 
 # this is for model comparison
-
-lavTestLRT(ea2.free, ea2.fixed)
-
-
-
-#ea2 <- sem(
-  #ea2.model,
-  #data = data.fit2,
-  #group = "de01",
-  #estimator = "MLR",
-  #std.lv = TRUE,
-  #missing = "fiml",
-  #fixed.x = FALSE,
-  #auto.fix.first = FALSE
-#)
-
-#summary(ea2, standardized = TRUE)
+lavTestLRT(ea2.free.fit, ea2.fixed.fit)
 
 
 #end of exploratory analysis
