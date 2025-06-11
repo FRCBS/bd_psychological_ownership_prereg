@@ -105,7 +105,6 @@ data <- data %>%
 ## Demographics Table 1
 
 ```{r}
-
 table1 <-
   tbl_summary(
     data = data %>% 
@@ -115,12 +114,12 @@ table1 <-
       DonationEligibility = bd01,
       DonationCount = bd02,
       DonationCountLast2years = bd03,
-      DaysFromLastDonation = bd04 
+      WeeksFromLastDonation = bd04 
     ),
     include = c(
       Age,
       DonationEligibility,
-      DaysFromLastDonation,
+      WeeksFromLastDonation,
       DonationCount,
       DonationCountLast2years
       ),
@@ -146,7 +145,6 @@ p <- p + xlab("Age in years")
 p
 
 ```
-
 
 
 ## Psychological ownership
