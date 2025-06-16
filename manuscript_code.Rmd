@@ -28,9 +28,12 @@ library(ggstats)
 library(lavaan)
 library(lavaanPlot)
 library(kableExtra)
-library(naniar)
 
+#additional packages added (plotting, cronbach's alpha)
+library(naniar)
+library(psych)
 library(gridExtra)
+
 #library(semPlot) # update plots to semPlot later
 #library(blavaan) # could not get it to work with this model and synthetic data, try as sensitivity analysis later
 #library(tidySEM) # https://github.com/yrosseel/lavaan/issues/359 lavaan does not work if tidySEM is loaded!
@@ -340,9 +343,6 @@ data.fit.stan %>%
 
 
 ```
-```
-
-
 
 # Model
 
@@ -466,7 +466,6 @@ data.fit.miss <- data.fit.miss %>%
          ss_selfid, 
          ss_intention)
 
-library(psych)
 corrplot(cor(data.fit.miss,use="pairwise.complete.obs"), method ='number')
 
 cor_test <- corr.test(data.fit.miss, use = "pairwise", method = "pearson")
@@ -579,6 +578,27 @@ mcar_test(data.fit3 %>% select(-dttma))
 #afterdata removing sum score donation variable (ss_donation)
 ```
 
+
+## Cronbach's Alpha
+
+```{r}
+
+scalepo <- data.fit2 %>% select(starts_with("po"))
+scaleid <- data.fit2 %>% select(starts_with("si"))
+scaleint <- data.fit2 %>% select(starts_with("it"))
+scaleco <- data.fit2 %>% select(starts_with("ac"))
+scalekn <- data.fit2 %>% select(starts_with("ai"))
+scaleiv <- data.fit2 %>% select(starts_with("iv"))
+
+alpha(scalepo)
+alpha(scaleid)
+alpha(scaleint)
+alpha(scaleco)
+alpha(scalekn)
+alpha(scaleiv)
+
+
+```
 
 
 ## Confirmatory factor analysis
@@ -790,7 +810,7 @@ labelsforplottingnull <- c(
 ```
 
 
-###  b) Sum score model with bootstrapping and listwise deletion
+#  b) Sum score model with bootstrapping and listwise deletion
 
 ```{r}
 nBoots <- 1000            
@@ -824,11 +844,12 @@ fit.po03ss.best %>% select(-label,se,z) %>%  filter(op == '~')
 ```{r}
 fit.po03ss.best %>% 
   filter(abs(est.std) < 0.3) %>% 
-  select(-z,-se) %>% 
+  select(-z) %>%   
   arrange(abs(est.std)) %>% 
   # Just the loadings
   filter(op != '~1')
 
+#including se
 ```
 
 
@@ -1369,9 +1390,6 @@ ea2.fixed.fit <- sem(
 # this is for model comparison
 lavTestLRT(ea2.free.fit, ea2.fixed.fit)
 
-
-#end of exploratory analysis
-knitr::knit_exit()
 
 ```
 
