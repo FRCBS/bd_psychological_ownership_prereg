@@ -1,5 +1,5 @@
 ---
-title: 'Appendix 2: Manuscript and Exploratory Code'
+title: 'Appendix 4: Model Comparison Code For Manuscript'
 author: "Abigail Edwards, Lauri Hietajärvi and Mikko Arvas"
 date: "`r Sys.setlocale('LC_TIME', 'C'); format(Sys.time())`"
 output:
@@ -1270,8 +1270,8 @@ if (fitmodels) {
       list(
         SSRL=fit.po02ss,
         SSBL=fit.po03ss,
-        SSRF = fit.po04ss,
-        SSBL = fit.po05ss,
+        SSRF=fit.po04ss,
+        SSBL=fit.po05ss,
         LFRL=fit.po02,
         LFBL=fit.po03, 
         LFRF=fit.po04,
