@@ -1168,7 +1168,7 @@ if (fitmodels) {
         SSRL=fit.po02ss,
         SSBL=fit.po03ss,
         SSRF = fit.po04ss,
-        SSBL = fit.po05ss,
+        SSBF = fit.po05ss,
         LFRL=fit.po02,
         LFBL=fit.po03, 
         LFRF=fit.po04,
@@ -1182,6 +1182,8 @@ if (fitmodels) {
   gfi <- models$gfi
 }
 gfi
+
+#after data (fix typo SSBL -> SSBF)
 ```
 
 According to https://easystats.github.io/effectsize/reference/interpret_gfi.html
