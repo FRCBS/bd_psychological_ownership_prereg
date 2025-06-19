@@ -61,6 +61,7 @@ fitmodels <- TRUE # TRUE for fitting models
 if (!fitmodels) {
   print("Loading previously fitted models")
   load(file=here("prereg_models.rdata"))
+  
   fit.po02ss <- models$fit.po02ss
   fit.po03ss <- models$fit.po03ss
   fit.po04ss <- models$fit.po04ss
@@ -147,35 +148,35 @@ as_kable_extra(table1, format = "latex")
 ## exploratory demographics table 
 
 ```{r}
-library(gtsummary)
-library(dplyr)
-library(kableExtra)
+#library(gtsummary)
+#library(dplyr)
+#library(kableExtra)
 
-edata_clean <- data %>%
-  filter(de01 == 'man' | de01 == "woman") %>%
-  rename(
-    Gender = de01,
-    Age = de02,
-    DonationEligibility = bd01,
-    DonationCount = bd02,
-    DonationCountLast2years = bd03,
-    WeeksFromLastDonation = bd04
-  )
+#edata_clean <- data %>%
+  #filter(de01 == 'man' | de01 == "woman") %>%
+  #rename(
+    #Gender = de01,
+    #Age = de02,
+    #DonationEligibility = bd01,
+    #DonationCount = bd02,
+    #DonationCountLast2years = bd03,
+    #WeeksFromLastDonation = bd04
+  #)
 
 # Create summary table
-etable1 <- tbl_summary(
-  data = edata_clean,
-  include = c(Age, DonationEligibility, WeeksFromLastDonation, DonationCount, DonationCountLast2years),
-  by = Gender,
-  statistic = list(
-    all_continuous() ~ "{mean} ({sd})",   # Use mean (SD) for continuous vars
-    all_categorical() ~ "{n} ({p}%)"
-  )
-) %>%
-  add_n()  # Adds total N for each group
+#etable1 <- tbl_summary(
+  #data = edata_clean,
+  #include = c(Age, DonationEligibility, WeeksFromLastDonation, DonationCount, DonationCountLast2years),
+  #by = Gender,
+  #statistic = list(
+    #all_continuous() ~ "{mean} ({sd})",   # Use mean (SD) for continuous vars
+    #all_categorical() ~ "{n} ({p}%)"
+  #)
+#) %>%
+  #add_n()  # Adds total N for each group
 
 # Output as LaTeX
-as_kable_extra(etable1, format = "latex")
+#as_kable_extra(etable1, format = "latex")
 
 
 ```
@@ -707,6 +708,11 @@ lavaanPlot(
 
 
 ```
+```{r}
+summary(fit.po03ss, standardized=TRUE, rsquare=TRUE)
+lavaan::fitmeasures(fit.po03ss,c("npar","chisq","df","cfi","rmsea","srmr"))
+```
+
 
 
 #  c) Sum score model with robust estimator and fiml
@@ -904,7 +910,7 @@ fit.po02.est %>% select(-label,se,z) %>%  filter(op == '~')
 
 fit.po02.est %>% 
   filter(abs(est.std) < 0.3) %>% 
-  select(-z,-se) %>% 
+  select(-z) %>% 
   arrange(abs(est.std)) %>% 
   # Just the loadings
   filter(op != '~1')
@@ -1040,6 +1046,13 @@ lavaanPlot(
 
 
 ```
+
+```{r}
+summary(fit.po04, standardized=TRUE, rsquare=TRUE)
+
+```
+
+
 
 ###  h) Latent factor model with bootstrapping and fiml
 
@@ -1271,7 +1284,8 @@ if (fitmodels) {
         SSRL=fit.po02ss,
         SSBL=fit.po03ss,
         SSRF=fit.po04ss,
-        SSBL=fit.po05ss,
+        #typo fixed (SSBL -> SSBF)
+        SSBF=fit.po05ss,
         LFRL=fit.po02,
         LFBL=fit.po03, 
         LFRF=fit.po04,
@@ -1305,7 +1319,7 @@ NB. Sum score and latent factor models use different data and are not nested hen
 
 ```{r}
 if (fitmodels) {
-  save(models,file=here("prereg_models.rdata"))
+  save(models,file=here("manuscript_models.rdata"))
   
 }
 ```
