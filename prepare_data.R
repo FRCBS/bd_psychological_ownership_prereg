@@ -79,7 +79,7 @@ data <- data %>%
     #Days between answering and last donation, done already
     #bd04 = as.numeric(as.Date(dttma) - bd04)
     
-  )  %>% select(-X,-consent,-open)
+  )  %>% select(-X,-consent)
 
 summary(data)
 #####################################################################################################################################

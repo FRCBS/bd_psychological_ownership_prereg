@@ -19,4 +19,4 @@ data:
 checksums:
   data/data_simulated.csv: 88f1daff783469335b0604e56e868cf3
   data/synthetic_data_simulated.csv: 88f1daff783469335b0604e56e868cf3
-  data/data.csv: a0b0bde75f7b3c7e04875f3bc2b11c44
+  data/data.csv: c9e06608d3df2ec8cb3c0f0d5e7ecc33
