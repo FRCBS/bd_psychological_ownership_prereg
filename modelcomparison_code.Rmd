@@ -1123,12 +1123,14 @@ lavaanPlot(
 ```{r , fig.height=8}
 
 #adding data from previous Australia study 
+
+#Previously Reported Effects (Sum score, bootstrapped, listwise)
 ##note estimates created using lavaan differ very slightly from estimates using process macro (original paper)
-manual_data <- tibble(
+manual_data1 <- tibble(
   est = c(0.343, 0.382, -0.137, 0.657, 0.322, -0.024, 0.073, -0.047, 0.25),
   ci.lower = c(0.227, 0.308, -0.215, 0.531, 0.226, -0.102, 0.035, -0.08, 0.186),
   ci.upper = c(0.459, 0.455, -0.06, 0.782, 0.418, 0.054, 0.11, -0.014, 0.315),
-  label = c("manuala1", "manuala2", "manualb1", "manualb2", "manuald21", "manualcp", "manualeff", "manualeff1", "manualeff2"),
+  label = c("manual1a1", "manual1a2", "manual1b1", "manual1b2", "manual1d21", "manual1cp", "manual1eff", "manual1eff1", "manual1eff2"),
   lhs = c("psycown", "selfid", "intention", "intention", "selfid", "intention", "ind_eff", "ind_eff1", "ind_eff2"),
   rhs = c("donation", "donation", "psycown", "selfid", "psycown", "donation", "a1*d21*b2", "a1*b1", "a2*b2"),
   op = c("~", "~", "~", "~", "~", "~", ":=", ":=", ":="),
@@ -1142,6 +1144,28 @@ manual_data <- tibble(
   #color = factor("Manual and Manual", levels = levels(data.forest$color)),
   hollow_group = NA
 )
+
+#best practice model (latent, robust, fiml)
+manual_data2 <- tibble(
+  est = c(0.369, 0.373, -0.19, 0.825, 0.341, -0.089, 0.104, -0.07, 0.308),
+  ci.lower = c(0.25, 0.279, -0.298, 0.696, 0.22, -0.183, 0.048, -0.117, 0.23),
+  ci.upper = c(0.487, 0.467, -0.081, 0.954, 0.461, 0.004, 0.159, -0.023, 0.386),
+  label = c("manual2a1", "manual2a2", "manual2b1", "manual2b2", "manual2d21", "manual2cp", "manual2eff", "manual2eff1", "manual2eff2"),
+  lhs = c("psycown", "selfid", "intention", "intention", "selfid", "intention", "ind_eff", "ind_eff1", "ind_eff2"),
+  rhs = c("donation", "donation", "psycown", "selfid", "psycown", "donation", "a1*d21*b2", "a1*b1", "a2*b2"),
+  op = c("~", "~", "~", "~", "~", "~", ":=", ":=", ":="),
+  term = c("a1:psycown~donation", "a2:selfid~donation", "b1:intention~psycown", "b2:intention~selfid", "d21:selfid~psycown", "cp:intention~donation", "ind_eff:=a1*d21*b2", "ind_eff1:ind_eff1:=a1*b1", "ind_eff2:ind_eff2:=a2*b2"),
+  #estmet = factor("Manual", levels = levels(data.forest$estmet)),
+  estmet = "Robust",
+  missing = "FIML",
+  linetype = "Latent factor",
+  sample = "Australia",
+  #mtype = factor("Manual-Manual-Manual", levels = levels(data.forest$mtype)),
+  #color = factor("Manual and Manual", levels = levels(data.forest$color)),
+  hollow_group = NA
+)
+
+
 
 data.forest  <- fit.po03.best %>% 
   mutate(
@@ -1181,7 +1205,7 @@ data.forest  <- fit.po03.best %>%
     ) %>% 
   arrange(estmet, term)
 
-data.forest <- bind_rows(data.forest, manual_data)
+data.forest <- bind_rows(data.forest, manual_data1, manual_data2)
 
 data.forest  <- fit.po03ss.best %>% 
   rename(est=est.std) %>% 
