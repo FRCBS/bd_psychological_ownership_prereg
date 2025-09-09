@@ -617,6 +617,12 @@ lavaan::summary(fit.po03ss,standardized = TRUE)
 
 
 ```{r}
+lavaan::inspect(fit.po03ss,"r2")
+```
+
+
+
+```{r}
 fit.po03ss.best  <-standardizedSolution(fit.po03ss)
 fit.po03ss.best %>% select(-label,se,z) %>%  filter(op == '~')
 ```
@@ -669,6 +675,12 @@ if (fitmodels) {
 
 lavaan::summary(fit.po04ss,standardized = TRUE)
 
+```
+
+
+
+```{r}
+lavaan::inspect(fit.po04ss,"r2")
 ```
 
 
@@ -726,6 +738,12 @@ if (fitmodels) {
 
 lavaan::summary(fit.po05ss,standardized = TRUE)
 
+```
+
+
+
+```{r}
+lavaan::inspect(fit.po05ss,"r2")
 ```
 
 
@@ -889,6 +907,11 @@ lavaan::summary(fit.po03,standardized = TRUE)
 
 
 ```{r}
+lavaan::inspect(fit.po03,"r2")
+```
+
+
+```{r}
 fit.po03.best <- parameterEstimates(fit.po03)
 fit.po03.best %>% select(-se,-z) %>% filter(op == "~")
 ```
@@ -932,6 +955,11 @@ if (fitmodels) {
 
 lavaan::summary(fit.po04,standardized = TRUE)
 
+```
+
+
+```{r}
+lavaan::inspect(fit.po04,"r2")
 ```
 
 
@@ -991,6 +1019,11 @@ if (fitmodels) {
 
 lavaan::summary(fit.po05,standardized = TRUE)
 
+```
+
+
+```{r}
+lavaan::inspect(fit.po05,"r2")
 ```
 
 
