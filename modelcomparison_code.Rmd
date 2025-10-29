@@ -557,7 +557,7 @@ ss_psycown ~ a1 *  ss_donation
 ss_selfid ~ a2 * ss_donation + d21 * ss_psycown
 
 #regression
-ss_intention ~  cp * ss_donation + b1 * ss_psycown + b2 * ss_selfid
+ss_intention ~  de01 + de02 + cp * ss_donation + b1 * ss_psycown + b2 * ss_selfid
 
 ind_eff := a1* d21 * b2 
 ind_eff1 := a1*b1
@@ -673,7 +673,9 @@ if (fitmodels) {
 lavaan::summary(fit.po03ss,standardized = TRUE)
 
 ```
-
+```{r}
+lavaan::inspect(fit.po03ss,"r2")
+```
 
 ```{r}
 fit.po03ss.best  <-standardizedSolution(fit.po03ss)
