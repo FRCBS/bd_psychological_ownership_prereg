@@ -1274,6 +1274,20 @@ pf <- data.forest %>%
   scale_size_manual(values = c("Australia" = 1.2, "Finland" = 0.8)) +
   geom_point(aes(shape = sample),size=3,position=pos,alpha=0.7)+
   scale_fill_discrete(na.value=NA, guide ="none") + 
+  scale_y_discrete(
+    name = "Relationship", 
+    labels = c(
+      "ind_eff2:ind_eff2:=a2*b2" = "Indirect Effect: a2*b2", 
+      "ind_eff1:ind_eff1:=a1*b1" = "Indirect Effect: a1*b1",
+      "ind_eff:=a1*d21*b2" = "Indirect Effect: a1*d21*b1",
+      "d21:selfid~psycown" = "Identity*Ownership (d21)",
+      "cp:intention~donation" = "Intention*Donation (cp)",
+      "b2:intention~selfid" = "Intention*Identity (b2)",
+      "b1:intention~psycown" = "Intention*Owenrship (b1)",
+      "a2:selfid~donation" = "Identity*Donation (a2)",
+      "a1:psycown~donation" = "Ownership*Donation(a1)"
+    )
+  ) +
   labs(x="Standardised Effect Size",y="Relationship") +
   labs(color="Model type", linetype="Variable type", shape="Sample") + 
   guides(size = "none") +
