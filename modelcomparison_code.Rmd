@@ -24,13 +24,17 @@ library(gtsummary)
 library(likert)
 library(here)
 library(corrplot)
-library(ggstats)
 library(lavaan)
 library(lavaanPlot)
 library(kableExtra)
-library(naniar)
-
+library(naniar) # for missing data
+library(patchwork)
 library(gridExtra)
+library(gt) # for table as plot
+library(ggpmisc) 
+library(ggcorrplot) #for corrplot
+library(ggstats) # for likert plots
+
 #library(semPlot) # update plots to semPlot later
 #library(blavaan) # could not get it to work with this model and synthetic data, try as sensitivity analysis later
 #library(tidySEM) # https://github.com/yrosseel/lavaan/issues/359 lavaan does not work if tidySEM is loaded!
@@ -144,7 +148,6 @@ as_kable_extra(table1, format = "latex")
 ```
 
 
-
 ## exploratory demographics table 
 
 ```{r}
@@ -180,6 +183,8 @@ as_kable_extra(table1, format = "latex")
 
 
 ```
+
+
 
 
 ## Age by sex
@@ -306,7 +311,7 @@ isfactor <- data %>%  summarise(across(everything(), ~ is.factor(.x))) %>%  as.l
 
 
 #standarsing behaviour variables
-data <- data %>%
+data.fit <- data %>%
 mutate(across(c(bd02, bd03, bd04), ~scale(.) %>% as.numeric()))
 
 #lavaan does not understand empty factor levels
@@ -335,6 +340,15 @@ data.fit <- data %>%
       across(starts_with("it"),~as.numeric(.)) %>%  
       rowMeans(na.rm = TRUE) %>% 
       scale() %>% as.numeric(),
+    ss_control = across(starts_with("ac"),~as.numeric(.)) %>%  
+      rowMeans(na.rm = TRUE) %>% 
+      scale() %>% as.numeric(),
+    ss_knowledge = across(starts_with("ai"),~as.numeric(.)) %>%  
+      rowMeans(na.rm = TRUE) %>% 
+      scale() %>% as.numeric(),
+    ss_selfinv = across(starts_with("iv"),~as.numeric(.)) %>%  
+      rowMeans(na.rm = TRUE) %>% 
+      scale() %>% as.numeric(),
     #ss_donation as only measuring bd03
     ss_donation = 
       across(all_of(c("bd03")), ~as.numeric(.)) %>%
@@ -343,6 +357,14 @@ data.fit <- data %>%
 
 # To make bootstrapping run there cannot be any unordered factors
 data.fit2 <- data.fit %>% 
+  #standarsing behaviour variables
+  mutate(across(c(bd02, bd03, bd04), ~scale(.) %>% as.numeric())) %>% 
+  #remove these as they are not used in modelling
+  select(
+    -ss_control,
+    -ss_knowledge,
+    ss_selfinv
+    ) %>% 
   mutate(
     de01 = as.ordered(de01)
   ) %>% # and neither any factors at all
@@ -363,6 +385,138 @@ summary(data.fit)
 corrplot(cor(data.fit2,use="pairwise.complete.obs"))
 
 ```
+
+
+## Demographics with correlation
+
+```{r}
+
+tmp <- data.fit %>% 
+  select(
+        de01,
+         de02,
+         ss_control,
+         ss_knowledge,
+         ss_selfinv,
+         bd03, 
+         ss_psycown,
+         ss_selfid,
+         ss_intention 
+         ) %>%
+  select(ncol(.):1) %>% 
+  mutate(
+    across(everything(),as.numeric)
+  ) %>% 
+  rename(
+        "Gender"=de01,
+         "Age (years)" = de02,
+         "Control" = ss_control,
+         "Knowledge" =  ss_knowledge,
+         "Self-investment" = ss_selfinv,
+         "Past donations in 2 years" = bd03, 
+         "Psychological ownership" = ss_psycown,
+         "Self-identity" = ss_selfid,
+         "Intention" = ss_intention 
+           )
+
+pt2 <- ggcorrplot(
+  #compute correlatins from normalised values
+  cor(tmp,use="pairwise.complete.obs"),
+  show.diag = FALSE,
+  outline.color = "white",
+  p.mat = cor_pmat(tmp,use="pairwise.complete.obs"),
+  sig.level=0.01,
+  #insig = "",
+  lab=TRUE,
+  lab_size = 3,
+  show.legend = TRUE,
+  tl.cex = 10,
+  digits = 1
+ )
+
+
+#compute mean and sd on original scale
+tmp <- data %>%
+  #lavaan cannot deal with unordered factor with more then 2 levels
+  filter(de01 == 'man' | de01 == "woman") %>% # EXCLUSION
+  filter(bd01 != 'no') %>% # EXCLUSION
+  mutate(
+    across(isfactor, ~ fct_drop(.x)
+    ) %>% 
+      mutate(
+        de01 = as.numeric(de01), # for counting correlation
+       )
+  ) %>% 
+  #Original paper used sum scores instead of FA. 
+  mutate(
+    ss_psycown = 
+      across(starts_with("po"),~as.numeric(.)) %>%  
+      rowMeans(na.rm = TRUE),
+    ss_selfid = 
+      across(starts_with("si"),~as.numeric(.)) %>%  
+      rowMeans(na.rm = TRUE) ,
+    ss_intention = 
+      across(starts_with("it"),~as.numeric(.)) %>%  
+      rowMeans(na.rm = TRUE) ,
+    ss_control = across(starts_with("ac"),~as.numeric(.)) %>%  
+      rowMeans(na.rm = TRUE) ,
+    ss_knowledge = across(starts_with("ai"),~as.numeric(.)) %>%  
+      rowMeans(na.rm = TRUE),
+    ss_selfinv = across(starts_with("iv"),~as.numeric(.)) %>%  
+      rowMeans(na.rm = TRUE) ,
+  ) %>% select(
+    de01,de02,ss_control,ss_knowledge,ss_selfinv,bd03, ss_psycown,ss_selfid,ss_intention 
+  ) %>% pivot_longer(cols = everything(), names_to = "Variable", values_to = "val") %>%
+  group_by(Variable) %>% 
+  summarize(mean = mean(val,na.rm=TRUE), sd = sd(val,na.rm=TRUE)
+  ) %>% mutate(
+    Mean = as.character(round(mean,2)),
+    SD = as.character(round(sd,2))
+  ) %>% select(-mean,-sd) %>%  
+  mutate(
+    Variable = factor(
+      Variable,
+      labels = c(
+          "Gender",
+         "Age (years)",
+         "Control",
+         "Knowledge",
+         "Self-investment",
+         "Past donations in 2 years", 
+         "Psychological ownership",
+         "Self-identity",
+         "Intention" 
+      ),
+      levels = c(
+        "de01",
+        "de02",
+        "ss_control",
+                 "ss_knowledge",
+                 "ss_selfinv",
+                 "bd03", 
+                 "ss_psycown",
+                 "ss_selfid",
+                 "ss_intention"),
+      ordered = TRUE
+    ),
+    x=1,
+  )  %>% arrange(Variable)
+  
+tmp[tmp$Variable == 'de01','Mean'] <- ' ' 
+tmp[tmp$Variable == 'de01','SD'] <- ' '
+
+#Plot tehm
+tab1 <-  gt(tmp %>% select(-x)) %>% tab_options(table.font.size = 12,data_row.padding = px(6))
+pt2 + wrap_table(tab1,space="free_y")
+```
+
+```{r}
+ggsave(filename = here("figures/table1asFig.pdf"),units = "cm",width = 18,height = 10)
+ggsave(filename = here("figures/table1asFig.png"),units = "cm",width = 18,height = 10)
+```
+
+
+
 
 ```{r}
 
@@ -418,9 +572,9 @@ data.fit3 <- data.fit2 %>%
   select(-ss_psycown,
          -ss_selfid, 
          -ss_intention,
-         -ss_donation)
+         -ss_donation,
+         -ss_selfinv)
 
-corrplot(cor(data.fit3,use="pairwise.complete.obs"))
 mcar_test(data.fit3 %>% select(-dttma))
 
 #afterdata mcar not running, checking if items are too highly correlated
@@ -440,6 +594,11 @@ mcar_test(data.fit3 %>% select(-dttma))
 #afterdata removing sum score donation variable (ss_donation)
 ```
 
+
+
+```{r}
+corrplot(cor(data.fit3,use="pairwise.complete.obs"))
+```
 
 
 ## Confirmatory factor analysis
@@ -636,7 +795,7 @@ labelsforplottingnull <- c(
   "ss_psycown" = "Psychological ownership",
   "ss_selfid"  = "Self-identity",
   "ss_intention" = "Intention",
-  "ss_donation" = "Blood donation history"
+  "ss_donation" = "Past donation behaviour"
 )
 
 lavaanPlot(
@@ -646,7 +805,8 @@ lavaanPlot(
   edge_options = list(color = "grey"), 
   coefs = TRUE, 
   stand = TRUE,
-  sig=0.001
+  #sig=0.001,
+  stars = "regress"
   ) %>% lavaanPlot::embed_plot_pdf(here("figures/plsssem02.pdf"))
 ```
 
@@ -705,7 +865,8 @@ lavaanPlot(
   edge_options = list(color = "grey"), 
   coefs = TRUE, 
   stand = TRUE,
-  sig=0.001
+  #sig=0.001,
+  stars = "regress"
   ) %>% lavaanPlot::embed_plot_pdf(here("figures/plsssem03.pdf"))
 
 
@@ -769,7 +930,8 @@ lavaanPlot(
   edge_options = list(color = "grey"), 
   coefs = TRUE, 
   stand = TRUE,
-  sig=0.001
+  #sig=0.001,
+  stars = "regress"
   ) %>% lavaanPlot::embed_plot_pdf(here("figures/plsssem04.pdf"))
 
 
@@ -830,7 +992,8 @@ lavaanPlot(
   edge_options = list(color = "grey"), 
   coefs = TRUE, 
   stand = TRUE,
-  sig=0.001
+  #sig=0.001,
+  stars = "regress"
   ) %>% lavaanPlot::embed_plot_pdf(here("figures/plsssem05.pdf"))
 
 ```
@@ -926,7 +1089,7 @@ labelsforplotting <- c(
   "psycown" = "Psychological ownership",
   "selfid"  = "Self-identity",
   "intention" = "Intention",
-  "donation" = "Blood donation history"
+  "donation" = "Past donation behaviour"
 )
 
 lavaanPlot(
@@ -936,7 +1099,8 @@ lavaanPlot(
   edge_options = list(color = "grey"), 
   coefs = TRUE, 
   stand = TRUE,
-  sig=0.001
+  #sig=0.001,
+   stars = "regress"
   ) %>% lavaanPlot::embed_plot_pdf(here("figures/pllvsem02.pdf"))
 
 ```
@@ -987,7 +1151,8 @@ lavaanPlot(
   edge_options = list(color = "grey"), 
   coefs = TRUE, 
   stand = TRUE,
-  sig=0.001
+  #sig=0.001,
+  stars = "regress"
   ) %>% lavaanPlot::embed_plot_pdf(here("figures/pllvsem03.pdf"))
 
 ```
@@ -1043,11 +1208,15 @@ lavaanPlot(
   edge_options = list(color = "grey"), 
   coefs = TRUE, 
   stand = TRUE,
-  sig=0.001
+  stars = "regress"
+  #sig=0.001,
   ) %>% lavaanPlot::embed_plot_pdf(here("figures/pllvsem04.pdf"))
 
 
 ```
+
+
+
 
 ```{r}
 summary(fit.po04, standardized=TRUE, rsquare=TRUE)
@@ -1109,7 +1278,8 @@ lavaanPlot(
   edge_options = list(color = "grey"), 
   coefs = TRUE, 
   stand = TRUE,
-  sig=0.001
+  #sig=0.001
+  stars = "regress"
   ) %>% lavaanPlot::embed_plot_pdf(here("figures/pllvsem05.pdf"))
 
 ```
