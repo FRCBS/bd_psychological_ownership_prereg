@@ -428,10 +428,10 @@ pt2 <- ggcorrplot(
   sig.level=0.01,
   #insig = "",
   lab=TRUE,
-  lab_size = 3,
+  lab_size = 2,
   show.legend = TRUE,
   tl.cex = 10,
-  digits = 1
+  digits = 2
  )
 
 
