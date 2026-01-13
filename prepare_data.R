@@ -79,7 +79,8 @@ data <- data %>%
     #Days between answering and last donation, done already
     #bd04 = as.numeric(as.Date(dttma) - bd04)
     
-  )  %>% select(-X,-consent)
+  )  %>% select(-X,-consent, -open)
+#For our public anonymous data we drop the open text answers.
 
 summary(data)
 #####################################################################################################################################
@@ -89,15 +90,23 @@ original_name <- here(paste0("data/",deparse(substitute(data)), ".csv")) # when 
 # Above is your data cleaning script
 # it ends with closed_data(), which for now just saves your synthetic data locally.
 # When you have real data, it will save the real data locally.
-closed_data(
-  #####################################################################################################################################
-  data = data, # when real data collected this will be changed to it
-  #####################################################################################################################################
-  filename = original_name, 
-  synthetic = FALSE)
+# closed_data(
+#   #####################################################################################################################################
+#   data = data, # when real data collected this will be changed to it
+#   #####################################################################################################################################
+#   filename = original_name, 
+#   synthetic = FALSE)
 # Then, add your custom synthetic data to this data asset (yes, for now they are both the same, but
 # when you collect the real data, the local data will be real and the remote synthetic
 synthetic_name <- paste0("synthetic_",deparse(substitute(data_simulated)), ".csv")
+###############
+# but as the data is completely anonymous and the analysis has been carried out we make the data open
+open_data(
+  data = data,
+  filename = original_name, 
+  synthetic = FALSE
+)
+
 #####################################################################################################################################
 original_name <- paste0("data/",deparse(substitute(data_simulated)), ".csv") # when real data collected this will be changed to it
 #####################################################################################################################################
