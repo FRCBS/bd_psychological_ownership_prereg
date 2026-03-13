@@ -1237,7 +1237,7 @@ lavaanPlot(
   model = fit.po05, 
    labels = labelsforplotting,
   node_options = list(shape = "box", fontname = "Helvetica"), 
-  edge_options = list(color = "grey"), 
+  edge_options = list(color = "salmon"), 
   coefs = TRUE, 
   stand = TRUE,
   #sig=0.001
