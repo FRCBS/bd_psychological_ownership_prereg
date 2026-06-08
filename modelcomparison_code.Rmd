@@ -1178,6 +1178,20 @@ lavaanPlot(
 ```
 
 
+```{r}
+lavaanPlot(
+  model = fit.po04, 
+   labels = labelsforplotting,
+  node_options = list(shape = "box", fontname = "Helvetica"), 
+  edge_options = list(color = "grey"), 
+  coefs = TRUE, 
+  stand = TRUE,
+  stars = "regress"
+  #sig=0.001,
+  ) %>% save_png(path=here("figures/pllvsem04.png"))
+
+```
+
 
 
 ```{r}
