@@ -1,5 +1,5 @@
 ---
-title: "Appendix 1: Preregistered analysis with simulated data"
+title: "Appendix 1: Preregistered analysis with study data"
 author: "Abigail Edwards, Lauri Hietajärvi and Mikko Arvas"
 date: "`r Sys.setlocale('LC_TIME', 'C'); format(Sys.time())`"
 output:

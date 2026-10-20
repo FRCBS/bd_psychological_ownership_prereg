@@ -1,13 +1,13 @@
 ---
-title: 'Appendix 4: Model Comparison Code For Manuscript'
+title: 'Appendix 3: Model Comparison Code For Manuscript'
 author: "Abigail Edwards, Lauri Hietajärvi and Mikko Arvas"
 date: "`r Sys.setlocale('LC_TIME', 'C'); format(Sys.time())`"
 output:
-  pdf_document:
-    toc: true
   html_document:
     toc: true
     df_print: paged
+  pdf_document:
+    toc: true
 always_allow_html: true
 ---
 
@@ -471,6 +471,9 @@ tmp[tmp$Variable == 'de01','SD'] <- ' '
 tab1 <-  gt(tmp %>% select(-x)) %>% tab_options(table.font.size = 12,data_row.padding = px(6))
 pt2 + wrap_table(tab1,space="free_y")
 ```
+
+### Publication Figure 1
+
 
 ```{r}
 ggsave(filename = here("figures/table1asFig.pdf"),units = "cm",width = 18,height = 10)
@@ -1261,7 +1264,7 @@ lavaanPlot(
 ```
 
 
-
+### Publication Figure 4 
 
 
 ## Compare models
@@ -1414,6 +1417,7 @@ data.forest  <- fit.po03ss.best %>%
 pos <- position_nudge(y=as.numeric(as.factor(data.forest$mtype))/10 -0.5) 
 
 pf <- data.forest %>% 
+  filter(!str_detect(pattern = "intention~de",string=term) ) %>% 
   ggplot(aes(est,xmin=ci.lower,xmax=ci.upper,y=term,fill=hollow_group,color=color,linetype=linetype))+
   geom_vline(xintercept=0,color="grey") +
   geom_linerange(aes(size = sample), position=pos) +
@@ -1425,13 +1429,13 @@ pf <- data.forest %>%
     labels = c(
       "ind_eff2:ind_eff2:=a2*b2" = "Indirect Effect: a2*b2", 
       "ind_eff1:ind_eff1:=a1*b1" = "Indirect Effect: a1*b1",
-      "ind_eff:=a1*d21*b2" = "Indirect Effect: a1*d21*b1",
-      "d21:selfid~psycown" = "Identity*Ownership (d21)",
-      "cp:intention~donation" = "Intention*Donation (cp)",
-      "b2:intention~selfid" = "Intention*Identity (b2)",
-      "b1:intention~psycown" = "Intention*Owenrship (b1)",
-      "a2:selfid~donation" = "Identity*Donation (a2)",
-      "a1:psycown~donation" = "Ownership*Donation(a1)"
+      "ind_eff:=a1*d21*b2" = "Indirect Effect: a1*d21*b2",
+      "d21:selfid~psycown" = "Identity~Ownership (d21)",
+      "cp:intention~donation" = "Intention~Donation (cp)",
+      "b2:intention~selfid" = "Intention~Identity (b2)",
+      "b1:intention~psycown" = "Intention~Ownership (b1)",
+      "a2:selfid~donation" = "Identity~Donation (a2)",
+      "a1:psycown~donation" = "Ownership~Donation(a1)"
     )
   ) +
   labs(x="Standardised Effect Size",y="Relationship") +
@@ -1441,6 +1445,8 @@ pf <- data.forest %>%
 
 pf
 ```
+
+### Publication Figure 3 
 
 ```{r}
 ggsave(pf,
